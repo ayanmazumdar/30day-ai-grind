@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>30-Day Applied AI Grind</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --amber:#D97706;--amber-light:#FEF3C7;--amber-dark:#92400E;
+    --green:#059669;--green-light:#D1FAE5;
+    --blue:#2563EB;--blue-light:#DBEAFE;
+    --red:#DC2626;--red-light:#FEE2E2;
+    --gray-50:#F9FAFB;--gray-100:#F3F4F6;--gray-200:#E5E7EB;
+    --gray-300:#D1D5DB;--gray-500:#6B7280;--gray-700:#374151;--gray-900:#111827;
+    --font-head:'Syne',sans-serif;--font-mono:'Space Mono',monospace;
+  }
+  body{font-family:'Syne',sans-serif;background:#F9FAFB;color:#111827;min-height:100vh}
+  .header{background:#111827;color:#fff;padding:2rem 1.5rem 1.5rem;position:sticky;top:0;z-index:100}
+  .header-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem}
+  .header-title{font-size:1.1rem;font-weight:700;letter-spacing:-0.5px;color:#fff}
+  .header-sub{font-size:0.7rem;color:#9CA3AF;font-family:'Space Mono',monospace;margin-top:2px}
+  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem;margin-bottom:1rem}
+  .stat-box{background:#1F2937;border-radius:8px;padding:0.6rem 0.75rem}
+  .stat-num{font-size:1.2rem;font-weight:700;color:#F59E0B;font-family:'Space Mono',monospace}
+  .stat-label{font-size:0.6rem;color:#9CA3AF;text-transform:uppercase;letter-spacing:1px;margin-top:1px}
+  .progress-wrap{background:#374151;border-radius:100px;height:8px;overflow:hidden}
+  .progress-bar{background:linear-gradient(90deg,#F59E0B,#EF4444);height:100%;border-radius:100px;transition:width 0.4s ease}
+  .progress-label{display:flex;justify-content:space-between;margin-top:6px}
+  .progress-text{font-size:0.65rem;color:#9CA3AF;font-family:'Space Mono',monospace}
+  .main{max-width:900px;margin:0 auto;padding:1.5rem 1rem}
+  .phase{margin-bottom:2rem}
+  .phase-header{display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:2px solid #111827}
+  .phase-num{background:#111827;color:#F59E0B;font-family:'Space Mono',monospace;font-size:0.65rem;padding:4px 8px;border-radius:4px;font-weight:700;white-space:nowrap}
+  .phase-title{font-size:1rem;font-weight:700;color:#111827}
+  .phase-meta{font-size:0.7rem;color:#6B7280;margin-left:auto;white-space:nowrap}
+  .day-card{background:#fff;border:1px solid #E5E7EB;border-radius:10px;margin-bottom:0.75rem;overflow:hidden}
+  .day-card.done{border-color:#A7F3D0;background:#F0FDF4}
+  .day-header{display:flex;align-items:center;gap:0.75rem;padding:0.75rem 1rem;cursor:pointer;user-select:none}
+  .day-header:hover{background:#F9FAFB}
+  .day-card.done .day-header:hover{background:#ECFDF5}
+  .day-num{font-family:'Space Mono',monospace;font-size:0.75rem;font-weight:700;color:#111827;min-width:52px}
+  .day-date{font-size:0.75rem;color:#374151;flex:1}
+  .day-badge{font-size:0.6rem;padding:3px 8px;border-radius:100px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase}
+  .badge-free{background:#FEF3C7;color:#92400E}
+  .badge-college{background:#DBEAFE;color:#1E40AF}
+  .day-hours{font-family:'Space Mono',monospace;font-size:0.65rem;color:#9CA3AF;white-space:nowrap}
+  .day-toggle{font-size:0.7rem;color:#9CA3AF;transition:transform 0.2s}
+  .day-toggle.open{transform:rotate(90deg)}
+  .day-body{padding:0.25rem 1rem 1rem;display:none}
+  .day-body.open{display:block}
+  .task-list{list-style:none}
+  .task-item{display:flex;align-items:flex-start;gap:0.6rem;padding:0.4rem 0;border-bottom:1px solid #F3F4F6}
+  .task-item:last-child{border-bottom:none}
+  .task-check{width:16px;height:16px;min-width:16px;cursor:pointer;accent-color:#F59E0B;margin-top:2px}
+  .task-text{font-size:0.82rem;color:#374151;line-height:1.5}
+  .task-text.done{text-decoration:line-through;color:#9CA3AF}
+  .task-resource{font-size:0.7rem;color:#2563EB;display:block;margin-top:2px}
+  .task-resource a{color:#2563EB;text-decoration:none}
+  .task-resource a:hover{text-decoration:underline}
+  .section-divider{font-size:0.65rem;font-family:'Space Mono',monospace;color:#F59E0B;background:#FEF3C7;padding:3px 8px;border-radius:4px;display:inline-block;margin:0.5rem 0 0.25rem;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+  .projects-section{background:#111827;border-radius:12px;padding:1.5rem;margin-bottom:2rem}
+  .projects-title{color:#F59E0B;font-size:0.7rem;font-family:'Space Mono',monospace;text-transform:uppercase;letter-spacing:2px;margin-bottom:1rem}
+  .project-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem}
+  .project-card{background:#1F2937;border-radius:8px;padding:1rem;border:1px solid #374151}
+  .project-tag{font-size:0.6rem;color:#F59E0B;font-family:'Space Mono',monospace;background:#374151;padding:2px 6px;border-radius:4px;display:inline-block;margin-bottom:0.5rem}
+  .project-name{font-size:0.9rem;font-weight:700;color:#fff;margin-bottom:0.4rem}
+  .project-desc{font-size:0.75rem;color:#9CA3AF;line-height:1.5;margin-bottom:0.5rem}
+  .project-stack{font-size:0.65rem;color:#6B7280;font-family:'Space Mono',monospace}
+  .project-stack span{background:#111827;padding:2px 5px;border-radius:3px;margin-right:3px;display:inline-block;margin-bottom:3px}
+  .resources-section{margin-bottom:2rem}
+  .resources-title{font-size:0.7rem;font-family:'Space Mono',monospace;color:#374151;text-transform:uppercase;letter-spacing:2px;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid #E5E7EB}
+  .resource-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0.6rem}
+  .resource-item{background:#fff;border:1px solid #E5E7EB;border-radius:8px;padding:0.75rem}
+  .resource-category{font-size:0.6rem;color:#F59E0B;text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:0.25rem}
+  .resource-name{font-size:0.82rem;font-weight:600;color:#111827;margin-bottom:0.2rem}
+  .resource-url{font-size:0.7rem;color:#2563EB}
+  .resource-url a{color:#2563EB;text-decoration:none}
+  .resource-url a:hover{text-decoration:underline}
+  .applications-section{background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:1.5rem;margin-bottom:2rem}
+  .apply-title{font-size:0.7rem;font-family:'Space Mono',monospace;text-transform:uppercase;letter-spacing:2px;color:#374151;margin-bottom:1rem;border-bottom:1px solid #E5E7EB;padding-bottom:0.5rem}
+  .apply-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:0.5rem}
+  .apply-item{background:#F9FAFB;border:1px solid #E5E7EB;border-radius:6px;padding:0.6rem 0.75rem}
+  .apply-site{font-size:0.82rem;font-weight:600;color:#111827}
+  .apply-url{font-size:0.7rem;color:#2563EB}
+  .apply-url a{color:#2563EB;text-decoration:none}
+  .apply-url a:hover{text-decoration:underline}
+  .apply-note{font-size:0.65rem;color:#6B7280;margin-top:2px}
+  @media(max-width:600px){
+    .stats-row{grid-template-columns:repeat(2,1fr)}
+    .header-top{flex-direction:column;gap:0.5rem}
+    .phase-meta{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="header-title">30-DAY APPLIED AI GRIND</div>
+      <div class="header-sub">Apr 25 → May 24, 2026 &nbsp;|&nbsp; Internship or bust</div>
+    </div>
+    <div style="font-family:'Space Mono',monospace;font-size:0.65rem;color:#F59E0B;text-align:right">
+      <div id="done-count" style="font-size:1rem;font-weight:700">0</div>
+      <div style="color:#9CA3AF">tasks done</div>
+    </div>
+  </div>
+  <div class="stats-row">
+    <div class="stat-box"><div class="stat-num" id="s-tasks">0%</div><div class="stat-label">Progress</div></div>
+    <div class="stat-box"><div class="stat-num" id="s-days">0</div><div class="stat-label">Days Done</div></div>
+    <div class="stat-box"><div class="stat-num" id="s-proj">0/3</div><div class="stat-label">Projects</div></div>
+    <div class="stat-box"><div class="stat-num" id="s-apps">0</div><div class="stat-label">Applied</div></div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-label">
+    <span class="progress-text" id="p-done">0 / 0 tasks</span>
+    <span class="progress-text" id="p-phase">Phase 1: Foundation</span>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- PROJECTS -->
+  <div class="projects-section">
+    <div class="projects-title">// 3 portfolio projects</div>
+    <div class="project-grid">
+      <div class="project-card">
+        <div class="project-tag">PROJECT 01</div>
+        <div class="project-name">DocTalk — RAG Q&A System</div>
+        <div class="project-desc">Upload any PDF. Ask questions. Get cited answers. Deploy on HuggingFace Spaces free tier.</div>
+        <div class="project-stack">
+          <span>LangChain</span><span>ChromaDB</span><span>Streamlit</span><span>Groq API</span><span>sentence-transformers</span>
+        </div>
+      </div>
+      <div class="project-card">
+        <div class="project-tag">PROJECT 02</div>
+        <div class="project-name">AutoAgent — Multi-Tool AI Agent</div>
+        <div class="project-desc">Autonomous agent with web search, Python execution, file I/O, and memory. ReAct pattern.</div>
+        <div class="project-stack">
+          <span>LangGraph</span><span>Tavily API</span><span>Groq</span><span>Streamlit</span><span>LangChain Tools</span>
+        </div>
+      </div>
+      <div class="project-card">
+        <div class="project-tag">PROJECT 03</div>
+        <div class="project-name">NicheBot — Fine-tuned Domain LLM</div>
+        <div class="project-desc">Fine-tune Llama 3.2 3B on niche dataset using QLoRA. Wrap with FastAPI + Gradio UI.</div>
+        <div class="project-stack">
+          <span>QLoRA/PEFT</span><span>HuggingFace</span><span>FastAPI</span><span>Gradio</span><span>Google Colab</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 1 -->
+  <div class="phase" id="phase-1">
+    <div class="phase-header">
+      <div class="phase-num">PHASE 01</div>
+      <div class="phase-title">Foundation Sprint</div>
+      <div class="phase-meta">Apr 25 — May 1 &nbsp;|&nbsp; Python · ML · LangChain setup</div>
+    </div>
+
+    <!-- Day 1 -->
+    <div class="day-card" id="card-d1">
+      <div class="day-header" onclick="toggleDay('d1')">
+        <div class="day-num">DAY 01</div>
+        <div class="day-date">Apr 25, Sat</div>
+        <div class="day-badge badge-free">FREE</div>
+        <div class="day-hours">~12 hrs</div>
+        <div class="day-toggle" id="tog-d1">▶</div>
+      </div>
+      <div class="day-body" id="body-d1">
+        <div class="section-divider">Environment setup</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d1" data-id="d1t1" onchange="taskChanged(this)"><div><span class="task-text">Install VS Code + Python extension, Git, Conda. Create GitHub account if not done.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d1" data-id="d1t2" onchange="taskChanged(this)"><div><span class="task-text">Build a professional GitHub README profile. Pin future projects. Add LinkedIn link.</span><span class="task-resource"><a href="https://github.com/rahuldkjain/github-profile-readme-generator" target="_blank">→ github.com/rahuldkjain/github-profile-readme-generator</a></span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d1" data-id="d1t3" onchange="taskChanged(this)"><div><span class="task-text">Complete Kaggle Python Course (5 hrs): Syntax, functions, lists, loops, conditionals.</span><span class="task-resource"><a href="https://www.kaggle.com/learn/python" target="_blank">→ kaggle.com/learn/python</a></span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d1" data-id="d1t4" onchange="taskChanged(this)"><div><span class="task-text">Read 10 real "Applied AI Engineer Intern" job descriptions on LinkedIn. Note repeated keywords. Write them down.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d1" data-id="d1t5" onchange="taskChanged(this)"><div><span class="task-text">Create accounts: HuggingFace, Groq (free API key), Tavily (free API key), Google Colab. Store API keys in a .env file template.</span><span class="task-resource"><a href="https://console.groq.com" target="_blank">→ console.groq.com (free, fast Llama/Mixtral)</a></span></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Day 2 -->
+    <div class="day-card" id="card-d2">
+      <div class="day-header" onclick="toggleDay('d2')">
+        <div class="day-num">DAY 02</div>
+        <div class="day-date">Apr 26, Sun</div>
+        <div class="day-badge badge-free">FREE</div>
+        <div class="day-hours">~12 hrs</div>
+        <div class="day-toggle" id="tog-d2">▶</div>
+      </div>
+      <div class="day-body" id="body-d2">
+        <div class="section-divider">ML Fundamentals</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d2" data-id="d2t1" onchange="taskChanged(this)"><div><span class="task-text">Complete Kaggle Intro to Machine Learning course (4 hrs): decision trees, model validation, random forests.</span><span class="task-resource"><a href="https://www.kaggle.com/learn/intro-to-machine-learning" target="_blank">→ kaggle.com/learn/intro-to-machine-learning</a></span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d2" data-id="d2t2" onchange="taskChanged(this)"><div><span class="task-text">NumPy + Pandas 2-hr crash course on Kaggle. Do the exercises. Don't just watch.</span><span class="task-resource"><a href="https://www.kaggle.com/learn/pandas" target="_blank">→ kaggle.com/learn/pandas</a></span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d2" data-id="d2t3" onchange="taskChanged(this)"><div><span class="task-text">Build your first sklearn model: train a classifier on the Titanic dataset, achieve >78% accuracy.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d2" data-id="d2t4" onchange="taskChanged(this)"><div><span class="task-text">Create a free HuggingFace Space. Deploy a "Hello World" Gradio app on it. Share the link on LinkedIn.</span><span class="task-resource"><a href="https://huggingface.co/spaces" target="_blank">→ huggingface.co/spaces</a></span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d2" data-id="d2t5" onchange="taskChanged(this)"><div><span class="task-text">Watch Andrej Karpathy "The spelled-out intro to neural networks" (2.5 hrs). Take notes on backprop.</span><span class="task-resource"><a href="https://www.youtube.com/watch?v=VMj-3S1tku0" target="_blank">→ youtube.com — karpathy micrograd</a></span></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Day 3 -->
+    <div class="day-card" id="card-d3">
+      <div class="day-header" onclick="toggleDay('d3')">
+        <div class="day-num">DAY 03</div>
+        <div class="day-date">Apr 27, Mon</div>
+        <div class="day-badge badge-college">COLLEGE</div>
+        <div class="day-hours">~6 hrs</div>
+        <div class="day-toggle" id="tog-d3">▶</div>
+      </div>
+      <div class="day-body" id="body-d3">
+        <div class="section-divider">Morning (2 hrs before college)</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d3" data-id="d3t1" onchange="taskChanged(this)"><div><span class="task-text">Read "Attention is All You Need" abstract + introduction + architecture diagram only. Don't go deep yet.</span><span class="task-resource"><a href="https://arxiv.org/abs/1706.03762" target="_blank">→ arxiv.org/abs/1706.03762</a></span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d3" data-id="d3t2" onchange="taskChanged(this)"><div><span class="task-text">Read fast.ai Chapter 1 overview: what it means to train a model. 30 min.</span><span class="task-resource"><a href="https://course.fast.ai" target="_blank">→ course.fast.ai</a></span></div></li>
+        </ul>
+        <div class="section-divider">Evening (4 hrs after college)</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d3" data-id="d3t3" onchange="taskChanged(this)"><div><span class="task-text">Watch fast.ai Lesson 1 video (2 hrs). Run the notebook on Colab. Train an image classifier.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d3" data-id="d3t4" onchange="taskChanged(this)"><div><span class="task-text">Install PyTorch on local. Run basic tensor operations. Understand autograd with a 2-layer net.</span></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Day 4 -->
+    <div class="day-card" id="card-d4">
+      <div class="day-header" onclick="toggleDay('d4')">
+        <div class="day-num">DAY 04</div>
+        <div class="day-date">Apr 28, Tue</div>
+        <div class="day-badge badge-college">COLLEGE</div>
+        <div class="day-hours">~6 hrs</div>
+        <div class="day-toggle" id="tog-d4">▶</div>
+      </div>
+      <div class="day-body" id="body-d4">
+        <div class="section-divider">Morning (2 hrs)</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d4" data-id="d4t1" onchange="taskChanged(this)"><div><span class="task-text">HuggingFace NLP Course Chapter 1: The Transformer model family, pipelines, tokenization.</span><span class="task-resource"><a href="https://huggingface.co/learn/nlp-course/chapter1" target="_blank">→ huggingface.co/learn/nlp-course</a></span></div></li>
+        </ul>
+        <div class="section-divider">Evening (4 hrs)</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d4" data-id="d4t2" onchange="taskChanged(this)"><div><span class="task-text">HuggingFace NLP Course Chapter 2: Using HuggingFace transformers library. Run sentiment analysis, NER, QA pipelines on your own text.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d4" data-id="d4t3" onchange="taskChanged(this)"><div><span class="task-text">DeepLearning.AI — "ChatGPT Prompt Engineering for Developers" (1 hr, free). Focus on structured output and chaining prompts.</span><span class="task-resource"><a href="https://learn.deeplearning.ai/chatgpt-prompt-eng" target="_blank">→ learn.deeplearning.ai</a></span></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Day 5 -->
+    <div class="day-card" id="card-d5">
+      <div class="day-header" onclick="toggleDay('d5')">
+        <div class="day-num">DAY 05</div>
+        <div class="day-date">Apr 29, Wed</div>
+        <div class="day-badge badge-college">COLLEGE</div>
+        <div class="day-hours">~6 hrs</div>
+        <div class="day-toggle" id="tog-d5">▶</div>
+      </div>
+      <div class="day-body" id="body-d5">
+        <div class="section-divider">Morning (2 hrs)</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d5" data-id="d5t1" onchange="taskChanged(this)"><div><span class="task-text">LangChain quickstart: install, run first chain, understand LCEL (LangChain Expression Language). 45 min.</span><span class="task-resource"><a href="https://python.langchain.com/docs/get_started/quickstart" target="_blank">→ python.langchain.com/docs/get_started/quickstart</a></span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d5" data-id="d5t2" onchange="taskChanged(this)"><div><span class="task-text">Watch "LangChain explained in 13 minutes" on YouTube. Then the official LangChain crash course.</span><span class="task-resource"><a href="https://www.youtube.com/watch?v=aywZrzNaKjs" target="_blank">→ youtube — LangChain crash course</a></span></div></li>
+        </ul>
+        <div class="section-divider">Evening (4 hrs)</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d5" data-id="d5t3" onchange="taskChanged(this)"><div><span class="task-text">DeepLearning.AI — "LangChain for LLM Application Development" (1.5 hrs free). Complete all notebooks.</span><span class="task-resource"><a href="https://learn.deeplearning.ai/langchain" target="_blank">→ learn.deeplearning.ai/langchain</a></span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d5" data-id="d5t4" onchange="taskChanged(this)"><div><span class="task-text">Build a simple Q&A chain using Groq API + LangChain. Ask it questions from a text you paste in.</span></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Day 6 -->
+    <div class="day-card" id="card-d6">
+      <div class="day-header" onclick="toggleDay('d6')">
+        <div class="day-num">DAY 06</div>
+        <div class="day-date">Apr 30, Thu</div>
+        <div class="day-badge badge-college">COLLEGE</div>
+        <div class="day-hours">~6 hrs</div>
+        <div class="day-toggle" id="tog-d6">▶</div>
+      </div>
+      <div class="day-body" id="body-d6">
+        <div class="section-divider">Morning (2 hrs)</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d6" data-id="d6t1" onchange="taskChanged(this)"><div><span class="task-text">Learn vector embeddings conceptually: what they are, why they matter for LLMs. Read "What are embeddings" by Simon Willison.</span><span class="task-resource"><a href="https://simonwillison.net/2023/Oct/23/embeddings/" target="_blank">→ simonwillison.net/2023/Oct/23/embeddings</a></span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d6" data-id="d6t2" onchange="taskChanged(this)"><div><span class="task-text">Install ChromaDB. Run the quickstart: create a collection, add documents, query by similarity.</span><span class="task-resource"><a href="https://docs.trychroma.com/getting-started" target="_blank">→ docs.trychroma.com</a></span></div></li>
+        </ul>
+        <div class="section-divider">Evening (4 hrs)</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d6" data-id="d6t3" onchange="taskChanged(this)"><div><span class="task-text">DeepLearning.AI — "LangChain: Chat with Your Data" (1.5 hrs free). This is the exact foundation for Project 1.</span><span class="task-resource"><a href="https://learn.deeplearning.ai/langchain-chat-with-your-data" target="_blank">→ learn.deeplearning.ai</a></span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d6" data-id="d6t4" onchange="taskChanged(this)"><div><span class="task-text">Create GitHub repo for Project 1 (DocTalk). Write the README before building. Plan architecture in a diagram.</span></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Day 7 -->
+    <div class="day-card" id="card-d7">
+      <div class="day-header" onclick="toggleDay('d7')">
+        <div class="day-num">DAY 07</div>
+        <div class="day-date">May 1, Fri — Labour Day</div>
+        <div class="day-badge badge-free">FREE</div>
+        <div class="day-hours">~12 hrs</div>
+        <div class="day-toggle" id="tog-d7">▶</div>
+      </div>
+      <div class="day-body" id="body-d7">
+        <div class="section-divider">PROJECT 1 STARTS TODAY</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d7" data-id="d7t1" onchange="taskChanged(this)"><div><span class="task-text">Build PDF loader pipeline: PyPDFLoader → text splitter (RecursiveCharacterTextSplitter, chunk=500, overlap=50) → ChromaDB vector store using sentence-transformers "all-MiniLM-L6-v2".</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d7" data-id="d7t2" onchange="taskChanged(this)"><div><span class="task-text">Build retrieval chain: similarity search (top-k=3) → prompt template with context → Groq LLM → output.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d7" data-id="d7t3" onchange="taskChanged(this)"><div><span class="task-text">Test the chain in a simple Python script: load a PDF you have (any textbook), ask 5 questions. Tune chunk size if answers are bad.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d7" data-id="d7t4" onchange="taskChanged(this)"><div><span class="task-text">Start Streamlit UI: file uploader, chat input, chat history display. 2-column layout.</span><span class="task-resource"><a href="https://docs.streamlit.io/develop/tutorials/llms/build-conversational-apps" target="_blank">→ streamlit.io docs — build conversational apps</a></span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d7" data-id="d7t5" onchange="taskChanged(this)"><div><span class="task-text">Watch Greg Kamradt's "5 levels of text splitting" video. Understand why naive splitting kills RAG quality.</span><span class="task-resource"><a href="https://www.youtube.com/watch?v=8OJC21T2SL4" target="_blank">→ youtube — Greg Kamradt chunking strategies</a></span></div></li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PHASE 2 -->
+  <div class="phase" id="phase-2">
+    <div class="phase-header">
+      <div class="phase-num">PHASE 02</div>
+      <div class="phase-title">Core AI Stack + RAG Mastery</div>
+      <div class="phase-meta">May 2 — May 10 &nbsp;|&nbsp; Agents · RAG · Deployment</div>
+    </div>
+
+    <!-- Day 8 -->
+    <div class="day-card" id="card-d8">
+      <div class="day-header" onclick="toggleDay('d8')">
+        <div class="day-num">DAY 08</div>
+        <div class="day-date">May 2, Sat</div>
+        <div class="day-badge badge-free">FREE</div>
+        <div class="day-hours">~12 hrs</div>
+        <div class="day-toggle" id="tog-d8">▶</div>
+      </div>
+      <div class="day-body" id="body-d8">
+        <div class="section-divider">Project 1 — deep build day</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d8" data-id="d8t1" onchange="taskChanged(this)"><div><span class="task-text">Add ConversationalRetrievalChain with memory: user can ask follow-up questions. Chain remembers context from last 5 messages.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d8" data-id="d8t2" onchange="taskChanged(this)"><div><span class="task-text">Add source citation: every answer shows which PDF page it came from. LangChain "return_source_documents=True".</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d8" data-id="d8t3" onchange="taskChanged(this)"><div><span class="task-text">Add multi-document support: user can upload 3-5 PDFs at once, all get indexed into one vector store.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d8" data-id="d8t4" onchange="taskChanged(this)"><div><span class="task-text">Polish Streamlit UI: progress bars for upload, typing indicator, clear chat button, dark mode toggle.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d8" data-id="d8t5" onchange="taskChanged(this)"><div><span class="task-text">Study DeepLearning.AI "Building and Evaluating Advanced RAG" (free 1 hr). Learn RAG evaluation metrics: faithfulness, answer relevance, context recall.</span><span class="task-resource"><a href="https://learn.deeplearning.ai/building-evaluating-advanced-rag" target="_blank">→ learn.deeplearning.ai</a></span></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Day 9 -->
+    <div class="day-card" id="card-d9">
+      <div class="day-header" onclick="toggleDay('d9')">
+        <div class="day-num">DAY 09</div>
+        <div class="day-date">May 3, Sun</div>
+        <div class="day-badge badge-free">FREE</div>
+        <div class="day-hours">~12 hrs</div>
+        <div class="day-toggle" id="tog-d9">▶</div>
+      </div>
+      <div class="day-body" id="body-d9">
+        <div class="section-divider">Project 1 — deploy + ship</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d9" data-id="d9t1" onchange="taskChanged(this)"><div><span class="task-text">Create requirements.txt, Dockerfile basics for HuggingFace Spaces deployment. Push to HF Spaces.</span><span class="task-resource"><a href="https://huggingface.co/docs/hub/spaces-sdks-streamlit" target="_blank">→ huggingface.co docs — Streamlit spaces</a></span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d9" data-id="d9t2" onchange="taskChanged(this)"><div><span class="task-text">Write a killer README: problem statement, demo GIF (use Loom or ShareX to record), architecture diagram, setup instructions, limitations.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d9" data-id="d9t3" onchange="taskChanged(this)"><div><span class="task-text">POST PROJECT 1 ON LINKEDIN. Write 3-5 sentences about what you built and what you learned. Tag it #buildinpublic #llm #rag.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d9" data-id="d9t4" onchange="taskChanged(this)"><div><span class="task-text">DeepLearning.AI — "Functions, Tools and Agents with LangChain" (1.5 hrs). This is the foundation for Project 2.</span><span class="task-resource"><a href="https://learn.deeplearning.ai/functions-tools-agents-langchain" target="_blank">→ learn.deeplearning.ai</a></span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d9" data-id="d9t5" onchange="taskChanged(this)"><div><span class="task-text">Study ReAct paper + blog post: how agents reason + act in cycles. 45 min.</span><span class="task-resource"><a href="https://react-lm.github.io" target="_blank">→ react-lm.github.io</a></span></div></li>
+        </ul>
+        <div style="background:#D1FAE5;border-radius:6px;padding:8px 10px;margin-top:10px;font-size:0.75rem;color:#065F46;font-weight:600">✓ PROJECT 1 COMPLETE — DocTalk is live</div>
+      </div>
+    </div>
+
+    <!-- Day 10 -->
+    <div class="day-card" id="card-d10">
+      <div class="day-header" onclick="toggleDay('d10')">
+        <div class="day-num">DAY 10</div>
+        <div class="day-date">May 4, Mon</div>
+        <div class="day-badge badge-college">COLLEGE</div>
+        <div class="day-hours">~6 hrs</div>
+        <div class="day-toggle" id="tog-d10">▶</div>
+      </div>
+      <div class="day-body" id="body-d10">
+        <div class="section-divider">Morning (2 hrs)</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d10" data-id="d10t1" onchange="taskChanged(this)"><div><span class="task-text">LangChain Tools docs: understand built-in tools (DuckDuckGo, PythonREPL, Wikipedia, Tavily). Run each one independently first.</span><span class="task-resource"><a href="https://python.langchain.com/docs/integrations/tools" target="_blank">→ python.langchain.com/docs/integrations/tools</a></span></div></li>
+        </ul>
+        <div class="section-divider">Evening (4 hrs)</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d10" data-id="d10t2" onchange="taskChanged(this)"><div><span class="task-text">Build a basic ReAct agent using LangChain AgentExecutor with 2 tools: web search (Tavily) + Python REPL. Test with 10 complex prompts.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d10" data-id="d10t3" onchange="taskChanged(this)"><div><span class="task-text">LangGraph intro: why graphs > chains for agents. Study the official quickstart (1 hr).</span><span class="task-resource"><a href="https://langchain-ai.github.io/langgraph/tutorials/introduction/" target="_blank">→ langchain-ai.github.io/langgraph</a></span></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Day 11 -->
+    <div class="day-card" id="card-d11">
+      <div class="day-header" onclick="toggleDay('d11')">
+        <div class="day-num">DAY 11</div>
+        <div class="day-date">May 5, Tue</div>
+        <div class="day-badge badge-college">COLLEGE</div>
+        <div class="day-hours">~6 hrs</div>
+        <div class="day-toggle" id="tog-d11">▶</div>
+      </div>
+      <div class="day-body" id="body-d11">
+        <div class="section-divider">Morning (2 hrs)</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d11" data-id="d11t1" onchange="taskChanged(this)"><div><span class="task-text">Create GitHub repo for Project 2 (AutoAgent). Write architecture README. Define which tools the agent will have.</span></div></li>
+        </ul>
+        <div class="section-divider">Evening (4 hrs)</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d11" data-id="d11t2" onchange="taskChanged(this)"><div><span class="task-text">Build Project 2 core: LangGraph agent with 4 tools — web search, Python executor, file reader, calculator. Use Groq Llama 3.3 70B as backbone.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d11" data-id="d11t3" onchange="taskChanged(this)"><div><span class="task-text">Implement conversation memory with LangGraph: agent remembers last 10 turns. Test with multi-step tasks.</span></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Day 12 -->
+    <div class="day-card" id="card-d12">
+      <div class="day-header" onclick="toggleDay('d12')">
+        <div class="day-num">DAY 12</div>
+        <div class="day-date">May 6, Wed</div>
+        <div class="day-badge badge-college">COLLEGE</div>
+        <div class="day-hours">~6 hrs</div>
+        <div class="day-toggle" id="tog-d12">▶</div>
+      </div>
+      <div class="day-body" id="body-d12">
+        <div class="section-divider">Morning (2 hrs)</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d12" data-id="d12t1" onchange="taskChanged(this)"><div><span class="task-text">Study structured output with LangChain: Pydantic models, with_structured_output(). Build a tool that returns typed JSON.</span></div></li>
+        </ul>
+        <div class="section-divider">Evening (4 hrs)</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d12" data-id="d12t2" onchange="taskChanged(this)"><div><span class="task-text">Build Streamlit UI for AutoAgent: chat interface, tool use display panel (show the agent's thinking steps), export chat as PDF.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d12" data-id="d12t3" onchange="taskChanged(this)"><div><span class="task-text">DeepLearning.AI — "AI Agents in LangGraph" (1.5 hrs free). Study human-in-the-loop patterns.</span><span class="task-resource"><a href="https://learn.deeplearning.ai/ai-agents-in-langgraph" target="_blank">→ learn.deeplearning.ai</a></span></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Day 13 -->
+    <div class="day-card" id="card-d13">
+      <div class="day-header" onclick="toggleDay('d13')">
+        <div class="day-num">DAY 13</div>
+        <div class="day-date">May 7, Thu</div>
+        <div class="day-badge badge-college">COLLEGE</div>
+        <div class="day-hours">~6 hrs</div>
+        <div class="day-toggle" id="tog-d13">▶</div>
+      </div>
+      <div class="day-body" id="body-d13">
+        <div class="section-divider">Morning (2 hrs)</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d13" data-id="d13t1" onchange="taskChanged(this)"><div><span class="task-text">Advanced prompt engineering: few-shot, chain-of-thought, self-consistency. Read Microsoft's "Prompt Engineering Guide" sections 1-3.</span><span class="task-resource"><a href="https://www.promptingguide.ai" target="_blank">→ promptingguide.ai</a></span></div></li>
+        </ul>
+        <div class="section-divider">Evening (4 hrs)</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d13" data-id="d13t2" onchange="taskChanged(this)"><div><span class="task-text">Add a "task planner" sub-agent to AutoAgent: before answering, it makes a step-by-step plan. Implement as a separate node in the LangGraph.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d13" data-id="d13t3" onchange="taskChanged(this)"><div><span class="task-text">Test AutoAgent with 15 hard multi-step tasks. Document every failure. Fix the top 3 failure modes.</span></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Day 14 -->
+    <div class="day-card" id="card-d14">
+      <div class="day-header" onclick="toggleDay('d14')">
+        <div class="day-num">DAY 14</div>
+        <div class="day-date">May 8, Fri</div>
+        <div class="day-badge badge-college">COLLEGE</div>
+        <div class="day-hours">~6 hrs</div>
+        <div class="day-toggle" id="tog-d14">▶</div>
+      </div>
+      <div class="day-body" id="body-d14">
+        <div class="section-divider">Morning (2 hrs)</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d14" data-id="d14t1" onchange="taskChanged(this)"><div><span class="task-text">Learn FastAPI basics: routes, request/response models, async endpoints. Build a tiny API that wraps a simple LLM call.</span><span class="task-resource"><a href="https://fastapi.tiangolo.com/tutorial/" target="_blank">→ fastapi.tiangolo.com/tutorial</a></span></div></li>
+        </ul>
+        <div class="section-divider">Evening (4 hrs)</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d14" data-id="d14t2" onchange="taskChanged(this)"><div><span class="task-text">Add a FastAPI backend option to AutoAgent (as alternative to Streamlit). POST /chat endpoint returns streaming response.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d14" data-id="d14t3" onchange="taskChanged(this)"><div><span class="task-text">Study fine-tuning concepts: when to fine-tune vs RAG vs prompt engineering. Read Chip Huyen's "Fine-tuning" blog post.</span><span class="task-resource"><a href="https://huyenchip.com/2023/04/11/llm-engineering.html" target="_blank">→ huyenchip.com — LLM engineering</a></span></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Day 15 -->
+    <div class="day-card" id="card-d15">
+      <div class="day-header" onclick="toggleDay('d15')">
+        <div class="day-num">DAY 15</div>
+        <div class="day-date">May 9, Sat</div>
+        <div class="day-badge badge-free">FREE</div>
+        <div class="day-hours">~12 hrs</div>
+        <div class="day-toggle" id="tog-d15">▶</div>
+      </div>
+      <div class="day-body" id="body-d15">
+        <div class="section-divider">Project 2 — full build day</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d15" data-id="d15t1" onchange="taskChanged(this)"><div><span class="task-text">Polish AutoAgent UI: add example tasks panel, show tool call logs expandable, add dark/light mode.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d15" data-id="d15t2" onchange="taskChanged(this)"><div><span class="task-text">Add guardrails: input validation, rate limiting, safe tool use (no shell injection, sandboxed Python).</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d15" data-id="d15t3" onchange="taskChanged(this)"><div><span class="task-text">Write comprehensive tests: unit test each tool, integration test the full agent with 20 prompts.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d15" data-id="d15t4" onchange="taskChanged(this)"><div><span class="task-text">Study QLoRA paper summary. Watch Tim Dettmers' "QLoRA: Efficient Finetuning" talk (1 hr).</span><span class="task-resource"><a href="https://www.youtube.com/watch?v=y9PHWGOa8HA" target="_blank">→ youtube — QLoRA overview</a></span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d15" data-id="d15t5" onchange="taskChanged(this)"><div><span class="task-text">Choose your fine-tuning domain for Project 3. Options: Indian legal Q&A, medical symptom checker, coding assistant, arxiv paper summarizer.</span></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Day 16 -->
+    <div class="day-card" id="card-d16">
+      <div class="day-header" onclick="toggleDay('d16')">
+        <div class="day-num">DAY 16</div>
+        <div class="day-date">May 10, Sun</div>
+        <div class="day-badge badge-free">FREE</div>
+        <div class="day-hours">~12 hrs</div>
+        <div class="day-toggle" id="tog-d16">▶</div>
+      </div>
+      <div class="day-body" id="body-d16">
+        <div class="section-divider">Project 2 — deploy + ship</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d16" data-id="d16t1" onchange="taskChanged(this)"><div><span class="task-text">Deploy AutoAgent to HuggingFace Spaces. Create a Loom demo video (3 min max). Upload to YouTube as unlisted.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d16" data-id="d16t2" onchange="taskChanged(this)"><div><span class="task-text">Write detailed GitHub README with architecture diagram (draw.io or excalidraw), demo video embed, and comparison: "agent vs plain LLM" section.</span><span class="task-resource"><a href="https://excalidraw.com" target="_blank">→ excalidraw.com (free diagramming)</a></span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d16" data-id="d16t3" onchange="taskChanged(this)"><div><span class="task-text">POST ON LINKEDIN + Twitter/X. Tag relevant AI engineers and companies. "Built an AI agent that..." format.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d16" data-id="d16t4" onchange="taskChanged(this)"><div><span class="task-text">Fine-tuning prep: find and download your training dataset from HuggingFace Hub (look for instruction-tuning format: alpaca, sharegpt). Target 10k-50k examples.</span><span class="task-resource"><a href="https://huggingface.co/datasets" target="_blank">→ huggingface.co/datasets</a></span></div></li>
+        </ul>
+        <div style="background:#D1FAE5;border-radius:6px;padding:8px 10px;margin-top:10px;font-size:0.75rem;color:#065F46;font-weight:600">✓ PROJECT 2 COMPLETE — AutoAgent is live</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 3 -->
+  <div class="phase" id="phase-3">
+    <div class="phase-header">
+      <div class="phase-num">PHASE 03</div>
+      <div class="phase-title">Advanced AI + Project 3</div>
+      <div class="phase-meta">May 11 — May 19 &nbsp;|&nbsp; Fine-tuning · Deployment · Polish</div>
+    </div>
+
+    <!-- Day 17 -->
+    <div class="day-card" id="card-d17">
+      <div class="day-header" onclick="toggleDay('d17')">
+        <div class="day-num">DAY 17</div>
+        <div class="day-date">May 11, Mon</div>
+        <div class="day-badge badge-college">COLLEGE</div>
+        <div class="day-hours">~6 hrs</div>
+        <div class="day-toggle" id="tog-d17">▶</div>
+      </div>
+      <div class="day-body" id="body-d17">
+        <div class="section-divider">Morning (2 hrs)</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d17" data-id="d17t1" onchange="taskChanged(this)"><div><span class="task-text">HuggingFace Course Chapter 3 (fine-tuning with Trainer API). Run the sentiment fine-tuning notebook on Colab T4 (free GPU).</span><span class="task-resource"><a href="https://huggingface.co/learn/nlp-course/chapter3" target="_blank">→ huggingface.co/learn/nlp-course/chapter3</a></span></div></li>
+        </ul>
+        <div class="section-divider">Evening (4 hrs)</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d17" data-id="d17t2" onchange="taskChanged(this)"><div><span class="task-text">Set up Google Colab Pro (free tier). Install: transformers, peft, trl, bitsandbytes, accelerate. Load Llama 3.2 3B in 4-bit (BitsAndBytesConfig).</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d17" data-id="d17t3" onchange="taskChanged(this)"><div><span class="task-text">Study LoRA: understand rank, alpha, target modules. Read the PEFT docs. Why LoRA works mathematically.</span><span class="task-resource"><a href="https://huggingface.co/docs/peft/conceptual_guides/lora" target="_blank">→ huggingface.co/docs/peft — LoRA guide</a></span></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Day 18 -->
+    <div class="day-card" id="card-d18">
+      <div class="day-header" onclick="toggleDay('d18')">
+        <div class="day-num">DAY 18</div>
+        <div class="day-date">May 12, Tue</div>
+        <div class="day-badge badge-college">COLLEGE</div>
+        <div class="day-hours">~6 hrs</div>
+        <div class="day-toggle" id="tog-d18">▶</div>
+      </div>
+      <div class="day-body" id="body-d18">
+        <div class="section-divider">Morning (2 hrs)</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d18" data-id="d18t1" onchange="taskChanged(this)"><div><span class="task-text">Format your training dataset into the correct structure: system prompt + user message + assistant response. Use HuggingFace datasets library to preprocess.</span></div></li>
+        </ul>
+        <div class="section-divider">Evening (4 hrs)</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d18" data-id="d18t2" onchange="taskChanged(this)"><div><span class="task-text">Create GitHub repo for Project 3 (NicheBot). Write README with motivation and dataset stats.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d18" data-id="d18t3" onchange="taskChanged(this)"><div><span class="task-text">Write the fine-tuning script using SFTTrainer from TRL library. Configure LoraConfig (r=16, alpha=32, dropout=0.05). Do a test run on 100 samples to make sure it runs without errors.</span><span class="task-resource"><a href="https://huggingface.co/docs/trl/sft_trainer" target="_blank">→ huggingface.co/docs/trl — SFTTrainer</a></span></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Day 19 -->
+    <div class="day-card" id="card-d19">
+      <div class="day-header" onclick="toggleDay('d19')">
+        <div class="day-num">DAY 19</div>
+        <div class="day-date">May 13, Tue — Holiday</div>
+        <div class="day-badge badge-free">FREE</div>
+        <div class="day-hours">~12 hrs</div>
+        <div class="day-toggle" id="tog-d19">▶</div>
+      </div>
+      <div class="day-body" id="body-d19">
+        <div class="section-divider">Project 3 — training day</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d19" data-id="d19t1" onchange="taskChanged(this)"><div><span class="task-text">RUN FULL FINE-TUNING on Colab A100 (use free credits). Target 2-3 epochs. Monitor training loss. Save checkpoints every 500 steps.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d19" data-id="d19t2" onchange="taskChanged(this)"><div><span class="task-text">While training runs: build FastAPI backend for NicheBot. POST /generate endpoint. Load the base model with PEFT adapter via merge_and_unload().</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d19" data-id="d19t3" onchange="taskChanged(this)"><div><span class="task-text">Evaluate: compare base model vs fine-tuned model on 20 test prompts. Write down 5 concrete improvements you observe.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d19" data-id="d19t4" onchange="taskChanged(this)"><div><span class="task-text">Push fine-tuned adapter weights to HuggingFace Hub (your personal namespace, public repo).</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d19" data-id="d19t5" onchange="taskChanged(this)"><div><span class="task-text">Study ML system design basics: read "Designing ML Systems" Ch 1-2 summary on Chip Huyen's blog.</span><span class="task-resource"><a href="https://huyenchip.com/2022/08/03/ml-research-vs-engineering.html" target="_blank">→ huyenchip.com</a></span></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Day 20 -->
+    <div class="day-card" id="card-d20">
+      <div class="day-header" onclick="toggleDay('d20')">
+        <div class="day-num">DAY 20</div>
+        <div class="day-date">May 14, Thu</div>
+        <div class="day-badge badge-college">COLLEGE</div>
+        <div class="day-hours">~6 hrs</div>
+        <div class="day-toggle" id="tog-d20">▶</div>
+      </div>
+      <div class="day-body" id="body-d20">
+        <div class="section-divider">Morning (2 hrs)</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d20" data-id="d20t1" onchange="taskChanged(this)"><div><span class="task-text">Docker: learn Dockerfile syntax, build + run a container, docker-compose basics. Build a Docker image for your FastAPI app.</span><span class="task-resource"><a href="https://docs.docker.com/get-started/" target="_blank">→ docs.docker.com/get-started</a></span></div></li>
+        </ul>
+        <div class="section-divider">Evening (4 hrs)</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d20" data-id="d20t2" onchange="taskChanged(this)"><div><span class="task-text">Build Gradio UI for NicheBot: clean chat interface, show model info sidebar, add sample prompts the user can click to try.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d20" data-id="d20t3" onchange="taskChanged(this)"><div><span class="task-text">Resume: create Overleaf account, use Jake's Resume LaTeX template. Fill in education, skills section. Add GitHub + LinkedIn + HuggingFace profile links.</span><span class="task-resource"><a href="https://www.overleaf.com/latex/templates/jakes-resume/syzfjbzwjncs" target="_blank">→ overleaf.com — Jake's Resume template</a></span></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Day 21 -->
+    <div class="day-card" id="card-d21">
+      <div class="day-header" onclick="toggleDay('d21')">
+        <div class="day-num">DAY 21</div>
+        <div class="day-date">May 15, Fri</div>
+        <div class="day-badge badge-college">COLLEGE</div>
+        <div class="day-hours">~6 hrs</div>
+        <div class="day-toggle" id="tog-d21">▶</div>
+      </div>
+      <div class="day-body" id="body-d21">
+        <div class="section-divider">Morning (2 hrs)</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d21" data-id="d21t1" onchange="taskChanged(this)"><div><span class="task-text">Deploy NicheBot on HuggingFace Spaces (Gradio). The model loads via HF Hub adapter + base model on CPU/free tier. If too slow, use Groq inference instead and brand it as "powered by fine-tuned prompts".</span></div></li>
+        </ul>
+        <div class="section-divider">Evening (4 hrs)</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d21" data-id="d21t2" onchange="taskChanged(this)"><div><span class="task-text">Resume: write experience section. Frame college projects as applied AI work. Use STAR format. Quantify everything (even if estimated). Add skills: Python, PyTorch, HuggingFace, LangChain, LangGraph, RAG, LoRA, FastAPI, Docker, Streamlit.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d21" data-id="d21t3" onchange="taskChanged(this)"><div><span class="task-text">Add all 3 projects to resume with: link, 1 line tech stack, 1 line impact ("Achieved X, used Y to Z").</span></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Day 22 -->
+    <div class="day-card" id="card-d22">
+      <div class="day-header" onclick="toggleDay('d22')">
+        <div class="day-num">DAY 22</div>
+        <div class="day-date">May 16, Sat</div>
+        <div class="day-badge badge-free">FREE</div>
+        <div class="day-hours">~12 hrs</div>
+        <div class="day-toggle" id="tog-d22">▶</div>
+      </div>
+      <div class="day-body" id="body-d22">
+        <div class="section-divider">Project 3 + Profile Polish</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d22" data-id="d22t1" onchange="taskChanged(this)"><div><span class="task-text">Write NicheBot README: explain fine-tuning motivation, dataset used, training results (loss curves screenshot), comparison table with base model.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d22" data-id="d22t2" onchange="taskChanged(this)"><div><span class="task-text">POST PROJECT 3 ON LINKEDIN. This is your most impressive post — fine-tuning shows depth. Include loss curve screenshot and model comparison examples.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d22" data-id="d22t3" onchange="taskChanged(this)"><div><span class="task-text">LinkedIn optimization: professional headshot (or use AI), "Open to work" badge (internship), headline = "Applied AI Engineer | RAG · Agents · Fine-tuning | seeking internship".</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d22" data-id="d22t4" onchange="taskChanged(this)"><div><span class="task-text">GitHub: pin all 3 repos, add topics/tags, create a GitHub portfolio README. Star count will come — focus on quality.</span></div></li>
+        </ul>
+        <div style="background:#D1FAE5;border-radius:6px;padding:8px 10px;margin-top:10px;font-size:0.75rem;color:#065F46;font-weight:600">✓ PROJECT 3 COMPLETE — NicheBot is live. All 3 projects done.</div>
+      </div>
+    </div>
+
+    <!-- Day 23 -->
+    <div class="day-card" id="card-d23">
+      <div class="day-header" onclick="toggleDay('d23')">
+        <div class="day-num">DAY 23</div>
+        <div class="day-date">May 17, Sun</div>
+        <div class="day-badge badge-free">FREE</div>
+        <div class="day-hours">~12 hrs</div>
+        <div class="day-toggle" id="tog-d23">▶</div>
+      </div>
+      <div class="day-body" id="body-d23">
+        <div class="section-divider">Application Prep</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d23" data-id="d23t1" onchange="taskChanged(this)"><div><span class="task-text">Finalize resume. Get it reviewed: paste into Claude and ask "review this resume for an Applied AI Engineering internship". Apply every suggestion that makes sense.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d23" data-id="d23t2" onchange="taskChanged(this)"><div><span class="task-text">Write 3 cover letter templates: (a) startup — casual, show energy; (b) big tech — precise, technical; (c) research lab — show curiosity. Each 150 words max.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d23" data-id="d23t3" onchange="taskChanged(this)"><div><span class="task-text">Build your target company list. 50 companies minimum. Sources: LinkedIn "AI intern" search, Wellfound, YC companies list, Internshala, Naukri. Categorize: dream / realistic / backup.</span><span class="task-resource"><a href="https://wellfound.com/jobs" target="_blank">→ wellfound.com (AngelList) — startup jobs</a></span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d23" data-id="d23t4" onchange="taskChanged(this)"><div><span class="task-text">Write cold email template. Subject: "AI Intern Candidate — built RAG + Agent systems, 3 live demos". Body: 4 sentences max. Include 1 project link.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d23" data-id="d23t5" onchange="taskChanged(this)"><div><span class="task-text">Apply to first 10 internships today. Log every application in a spreadsheet: company, role, date, link, status, follow-up date.</span></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Day 24 -->
+    <div class="day-card" id="card-d24">
+      <div class="day-header" onclick="toggleDay('d24')">
+        <div class="day-num">DAY 24</div>
+        <div class="day-date">May 18, Mon</div>
+        <div class="day-badge badge-college">COLLEGE</div>
+        <div class="day-hours">~6 hrs</div>
+        <div class="day-toggle" id="tog-d24">▶</div>
+      </div>
+      <div class="day-body" id="body-d24">
+        <div class="section-divider">Morning (2 hrs)</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d24" data-id="d24t1" onchange="taskChanged(this)"><div><span class="task-text">Interview prep: 20 most common AI/ML interview questions. Write answers to each. Key topics: bias-variance tradeoff, overfitting, embeddings, transformers, RAG vs fine-tuning.</span><span class="task-resource"><a href="https://www.mlinterviews.com" target="_blank">→ mlinterviews.com (free)</a></span></div></li>
+        </ul>
+        <div class="section-divider">Evening (4 hrs)</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d24" data-id="d24t2" onchange="taskChanged(this)"><div><span class="task-text">Apply to 10 more internships. Customize each cover letter (swap 1-2 sentences for company-specific context). Takes 5-7 min per application. Volume matters.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d24" data-id="d24t3" onchange="taskChanged(this)"><div><span class="task-text">Cold DM 5 people on LinkedIn who work as AI engineers at target companies. Template: "Hi [name], I'm a student building RAG + agent systems. Would love 15 min to learn about your work at [company]." Don't ask for a job directly.</span></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Day 25 -->
+    <div class="day-card" id="card-d25">
+      <div class="day-header" onclick="toggleDay('d25')">
+        <div class="day-num">DAY 25</div>
+        <div class="day-date">May 19, Tue</div>
+        <div class="day-badge badge-college">COLLEGE</div>
+        <div class="day-hours">~6 hrs</div>
+        <div class="day-toggle" id="tog-d25">▶</div>
+      </div>
+      <div class="day-body" id="body-d25">
+        <div class="section-divider">Morning (2 hrs)</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d25" data-id="d25t1" onchange="taskChanged(this)"><div><span class="task-text">LeetCode: solve 5 easy Python problems. Focus on strings, arrays, hash maps. AI roles still test basic coding. Timer yourself (15 min per problem).</span><span class="task-resource"><a href="https://leetcode.com/studyplan/top-interview-150/" target="_blank">→ leetcode.com/studyplan/top-interview-150</a></span></div></li>
+        </ul>
+        <div class="section-divider">Evening (4 hrs)</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d25" data-id="d25t2" onchange="taskChanged(this)"><div><span class="task-text">Apply to 10 more internships. Focus on Indian AI startups: Sarvam AI, Krutrim, Ola Krutrim, Observe.AI, Uniphore, Mad Street Den, Yellow.ai.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d25" data-id="d25t3" onchange="taskChanged(this)"><div><span class="task-text">Follow up on Day 23 applications (7 days rule: follow up if no response in 7 days). Send 1-line follow-up email.</span></div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 4 -->
+  <div class="phase" id="phase-4">
+    <div class="phase-header">
+      <div class="phase-num">PHASE 04</div>
+      <div class="phase-title">Full Send — Applications + Interview Prep</div>
+      <div class="phase-meta">May 20 — May 24 &nbsp;|&nbsp; Apply hard. Prep harder.</div>
+    </div>
+
+    <!-- Day 26 -->
+    <div class="day-card" id="card-d26">
+      <div class="day-header" onclick="toggleDay('d26')">
+        <div class="day-num">DAY 26</div>
+        <div class="day-date">May 20, Wed</div>
+        <div class="day-badge badge-free">FREE</div>
+        <div class="day-hours">~12 hrs</div>
+        <div class="day-toggle" id="tog-d26">▶</div>
+      </div>
+      <div class="day-body" id="body-d26">
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d26" data-id="d26t1" onchange="taskChanged(this)"><div><span class="task-text">Mock technical interview (solo): pick 3 ML interview questions, set a 30-min timer, answer out loud as if in an interview. Record yourself. Review.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d26" data-id="d26t2" onchange="taskChanged(this)"><div><span class="task-text">Apply to 15 more internships. Hit global opportunities: remote roles on LinkedIn, Wellfound, RemoteOK, Contra.</span><span class="task-resource"><a href="https://remoteok.com/remote-ai+jobs" target="_blank">→ remoteok.com/remote-ai+jobs</a></span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d26" data-id="d26t3" onchange="taskChanged(this)"><div><span class="task-text">Read "Grokking the ML Interview" (free PDF online) — system design section. Understand how to design a recommendation system, search engine, fraud detection at a high level.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d26" data-id="d26t4" onchange="taskChanged(this)"><div><span class="task-text">LeetCode: 5 medium problems on arrays/strings. Practice explaining your approach while solving.</span></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Day 27 -->
+    <div class="day-card" id="card-d27">
+      <div class="day-header" onclick="toggleDay('d27')">
+        <div class="day-num">DAY 27</div>
+        <div class="day-date">May 21, Thu</div>
+        <div class="day-badge badge-free">FREE</div>
+        <div class="day-hours">~12 hrs</div>
+        <div class="day-toggle" id="tog-d27">▶</div>
+      </div>
+      <div class="day-body" id="body-d27">
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d27" data-id="d27t1" onchange="taskChanged(this)"><div><span class="task-text">Apply to 15 more internships. Total by end of today: ~55 applications. Focus on companies you haven't reached yet.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d27" data-id="d27t2" onchange="taskChanged(this)"><div><span class="task-text">Deep project demo prep: for each project, prepare a 3-min verbal pitch. What problem, how you built it, what you'd improve next.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d27" data-id="d27t3" onchange="taskChanged(this)"><div><span class="task-text">Study: "How does ChatGPT work" at a technical level. Be ready to explain RLHF, instruction tuning, Constitutional AI. 2-hr deep dive.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d27" data-id="d27t4" onchange="taskChanged(this)"><div><span class="task-text">Twitter/X: post a 5-tweet thread about what you learned building your 3 projects. This is engineering marketing. It works.</span></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Day 28 -->
+    <div class="day-card" id="card-d28">
+      <div class="day-header" onclick="toggleDay('d28')">
+        <div class="day-num">DAY 28</div>
+        <div class="day-date">May 22, Fri</div>
+        <div class="day-badge badge-free">FREE</div>
+        <div class="day-hours">~12 hrs</div>
+        <div class="day-toggle" id="tog-d28">▶</div>
+      </div>
+      <div class="day-body" id="body-d28">
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d28" data-id="d28t1" onchange="taskChanged(this)"><div><span class="task-text">Final GitHub audit: all repos have README, demo link, and clean commit history. No "final final v2" commits. Squash and rebase if needed.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d28" data-id="d28t2" onchange="taskChanged(this)"><div><span class="task-text">Set up job alerts on LinkedIn (keyword: "AI engineer intern"), Internshala, Naukri, and Wellfound. You want new postings in your inbox daily.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d28" data-id="d28t3" onchange="taskChanged(this)"><div><span class="task-text">Apply to 10 more roles. Also check Unstop.com for hackathons + internship fests.</span><span class="task-resource"><a href="https://unstop.com" target="_blank">→ unstop.com — Indian opportunities</a></span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d28" data-id="d28t4" onchange="taskChanged(this)"><div><span class="task-text">LeetCode: 5 more problems. Total goal this week: 20 problems solved.</span></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Day 29 -->
+    <div class="day-card" id="card-d29">
+      <div class="day-header" onclick="toggleDay('d29')">
+        <div class="day-num">DAY 29</div>
+        <div class="day-date">May 23, Sat</div>
+        <div class="day-badge badge-free">FREE</div>
+        <div class="day-hours">~12 hrs</div>
+        <div class="day-toggle" id="tog-d29">▶</div>
+      </div>
+      <div class="day-body" id="body-d29">
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d29" data-id="d29t1" onchange="taskChanged(this)"><div><span class="task-text">Record a 2-minute portfolio walkthrough video: screen-record + voice, show all 3 projects live. Upload to YouTube (unlisted). Add link to your LinkedIn and resume.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d29" data-id="d29t2" onchange="taskChanged(this)"><div><span class="task-text">Final application blast: 10 more applications. Include any companies from your target list you haven't hit yet.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d29" data-id="d29t3" onchange="taskChanged(this)"><div><span class="task-text">Cold DM 10 founders on LinkedIn or Twitter who run AI startups. Short, direct: "I built X, Y, Z. Would love to contribute. Here's the demo."</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d29" data-id="d29t4" onchange="taskChanged(this)"><div><span class="task-text">Join communities: Hugging Face Discord, LangChain Discord, IndiaAI Slack, r/MachineLearning. Introduce yourself. Post your projects.</span></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Day 30 -->
+    <div class="day-card" id="card-d30">
+      <div class="day-header" onclick="toggleDay('d30')">
+        <div class="day-num">DAY 30</div>
+        <div class="day-date">May 24, Sun — D-Day</div>
+        <div class="day-badge badge-free">FREE</div>
+        <div class="day-hours">~12 hrs</div>
+        <div class="day-toggle" id="tog-d30">▶</div>
+      </div>
+      <div class="day-body" id="body-d30">
+        <div class="section-divider">Final review + full send</div>
+        <ul class="task-list">
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d30" data-id="d30t1" onchange="taskChanged(this)"><div><span class="task-text">Audit entire portfolio: open every deployed app, make sure nothing is broken. Fix any issues.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d30" data-id="d30t2" onchange="taskChanged(this)"><div><span class="task-text">Final resume pass: triple-check grammar, formatting, all links work. Export as PDF. Filename: "FirstName_LastName_AI_Intern_2026.pdf"</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d30" data-id="d30t3" onchange="taskChanged(this)"><div><span class="task-text">Apply to final 5-10 roles. Total applications by end of Day 30: minimum 65.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d30" data-id="d30t4" onchange="taskChanged(this)"><div><span class="task-text">Set up your follow-up system: Google Sheet with every application, follow-up date (7 days after applying), status column. Check it every morning going forward.</span></div></li>
+          <li class="task-item"><input type="checkbox" class="task-check" data-day="d30" data-id="d30t5" onchange="taskChanged(this)"><div><span class="task-text">Write a "30-day build challenge" LinkedIn post. What you built, what you learned, what's next. Honest and specific. This kind of post gets noticed by hiring managers.</span></div></li>
+        </ul>
+        <div style="background:#111827;border-radius:6px;padding:10px 12px;margin-top:12px;font-size:0.8rem;color:#F59E0B;font-family:'Space Mono',monospace;font-weight:700">30 DAYS DONE. 3 PROJECTS. 65+ APPLICATIONS. YOU SHOWED UP.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESOURCES -->
+  <div class="resources-section">
+    <div class="resources-title">// free resources master list</div>
+    <div class="resource-grid">
+      <div class="resource-item">
+        <div class="resource-category">Deep Learning</div>
+        <div class="resource-name">fast.ai — Practical DL</div>
+        <div class="resource-url"><a href="https://course.fast.ai" target="_blank">course.fast.ai</a></div>
+      </div>
+      <div class="resource-item">
+        <div class="resource-category">Transformers</div>
+        <div class="resource-name">HuggingFace NLP Course</div>
+        <div class="resource-url"><a href="https://huggingface.co/learn/nlp-course" target="_blank">huggingface.co/learn/nlp-course</a></div>
+      </div>
+      <div class="resource-item">
+        <div class="resource-category">LLM Fundamentals</div>
+        <div class="resource-name">Andrej Karpathy — NN Zero to Hero</div>
+        <div class="resource-url"><a href="https://karpathy.ai/zero-to-hero.html" target="_blank">karpathy.ai/zero-to-hero.html</a></div>
+      </div>
+      <div class="resource-item">
+        <div class="resource-category">Short Courses</div>
+        <div class="resource-name">DeepLearning.AI (all free)</div>
+        <div class="resource-url"><a href="https://learn.deeplearning.ai" target="_blank">learn.deeplearning.ai</a></div>
+      </div>
+      <div class="resource-item">
+        <div class="resource-category">LangChain</div>
+        <div class="resource-name">LangChain Python Docs</div>
+        <div class="resource-url"><a href="https://python.langchain.com" target="_blank">python.langchain.com</a></div>
+      </div>
+      <div class="resource-item">
+        <div class="resource-category">Fine-tuning</div>
+        <div class="resource-name">HuggingFace PEFT Docs</div>
+        <div class="resource-url"><a href="https://huggingface.co/docs/peft" target="_blank">huggingface.co/docs/peft</a></div>
+      </div>
+      <div class="resource-item">
+        <div class="resource-category">Free GPU</div>
+        <div class="resource-name">Google Colab (T4/A100)</div>
+        <div class="resource-url"><a href="https://colab.research.google.com" target="_blank">colab.research.google.com</a></div>
+      </div>
+      <div class="resource-item">
+        <div class="resource-category">Free Inference</div>
+        <div class="resource-name">Groq API (ultra fast, free)</div>
+        <div class="resource-url"><a href="https://console.groq.com" target="_blank">console.groq.com</a></div>
+      </div>
+      <div class="resource-item">
+        <div class="resource-category">Deployment</div>
+        <div class="resource-name">HuggingFace Spaces (free)</div>
+        <div class="resource-url"><a href="https://huggingface.co/spaces" target="_blank">huggingface.co/spaces</a></div>
+      </div>
+      <div class="resource-item">
+        <div class="resource-category">ML Practice</div>
+        <div class="resource-name">Kaggle Learn + Notebooks</div>
+        <div class="resource-url"><a href="https://www.kaggle.com/learn" target="_blank">kaggle.com/learn</a></div>
+      </div>
+      <div class="resource-item">
+        <div class="resource-category">Prompt Eng</div>
+        <div class="resource-name">Prompting Guide (Microsoft)</div>
+        <div class="resource-url"><a href="https://www.promptingguide.ai" target="_blank">promptingguide.ai</a></div>
+      </div>
+      <div class="resource-item">
+        <div class="resource-category">ML Engineering</div>
+        <div class="resource-name">Chip Huyen's Blog</div>
+        <div class="resource-url"><a href="https://huyenchip.com" target="_blank">huyenchip.com</a></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPLICATIONS -->
+  <div class="applications-section">
+    <div class="apply-title">// where to apply</div>
+    <div class="apply-grid">
+      <div class="apply-item">
+        <div class="apply-site">LinkedIn Jobs</div>
+        <div class="apply-url"><a href="https://www.linkedin.com/jobs/search/?keywords=AI+engineer+intern" target="_blank">linkedin.com/jobs</a></div>
+        <div class="apply-note">Best for big tech + global</div>
+      </div>
+      <div class="apply-item">
+        <div class="apply-site">Wellfound</div>
+        <div class="apply-url"><a href="https://wellfound.com/jobs?role=ai-engineer" target="_blank">wellfound.com/jobs</a></div>
+        <div class="apply-note">Best for AI startups</div>
+      </div>
+      <div class="apply-item">
+        <div class="apply-site">Internshala</div>
+        <div class="apply-url"><a href="https://internshala.com/internships/machine-learning-internship" target="_blank">internshala.com</a></div>
+        <div class="apply-note">India-focused, high volume</div>
+      </div>
+      <div class="apply-item">
+        <div class="apply-site">Naukri</div>
+        <div class="apply-url"><a href="https://www.naukri.com/ai-internship-jobs" target="_blank">naukri.com</a></div>
+        <div class="apply-note">India, good for stipend roles</div>
+      </div>
+      <div class="apply-item">
+        <div class="apply-site">HuggingFace Jobs</div>
+        <div class="apply-url"><a href="https://huggingface.co/jobs" target="_blank">huggingface.co/jobs</a></div>
+        <div class="apply-note">AI-native companies only</div>
+      </div>
+      <div class="apply-item">
+        <div class="apply-site">Unstop</div>
+        <div class="apply-url"><a href="https://unstop.com/internships" target="_blank">unstop.com</a></div>
+        <div class="apply-note">Hackathons + internships</div>
+      </div>
+      <div class="apply-item">
+        <div class="apply-site">RemoteOK</div>
+        <div class="apply-url"><a href="https://remoteok.com/remote-ai+intern+jobs" target="_blank">remoteok.com</a></div>
+        <div class="apply-note">Remote global AI roles</div>
+      </div>
+      <div class="apply-item">
+        <div class="apply-site">YC Jobs</div>
+        <div class="apply-url"><a href="https://www.ycombinator.com/jobs" target="_blank">ycombinator.com/jobs</a></div>
+        <div class="apply-note">Top startup internships</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const STORAGE_KEY = 'grind30_state';
+
+let state = { tasks: {}, expanded: {}, apps: 0 };
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      state = JSON.parse(raw);
+      applyState();
+    }
+  } catch(e) {}
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch(e) {}
+}
+
+function applyState() {
+  Object.keys(state.tasks).forEach(id => {
+    const cb = document.querySelector('[data-id="' + id + '"]');
+    if (cb && state.tasks[id]) {
+      cb.checked = true;
+      const txt = cb.closest('.task-item').querySelector('.task-text');
+      if (txt) txt.classList.add('done');
+    }
+  });
+  updateStats();
+  checkDayCompletion();
+}
+
+function taskChanged(cb) {
+  const id = cb.dataset.id;
+  const txt = cb.closest('.task-item').querySelector('.task-text');
+  if (cb.checked) {
+    state.tasks[id] = true;
+    if (txt) txt.classList.add('done');
+  } else {
+    delete state.tasks[id];
+    if (txt) txt.classList.remove('done');
+  }
+  updateStats();
+  checkDayCompletion();
+  saveState();
+}
+
+function updateStats() {
+  const all = document.querySelectorAll('.task-check');
+  const done = document.querySelectorAll('.task-check:checked');
+  const total = all.length;
+  const count = done.length;
+  const pct = total ? Math.round((count / total) * 100) : 0;
+
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('p-done').textContent = count + ' / ' + total + ' tasks';
+  document.getElementById('s-tasks').textContent = pct + '%';
+  document.getElementById('done-count').textContent = count;
+
+  // Count completed days
+  let completedDays = 0;
+  for (let d = 1; d <= 30; d++) {
+    const dayTasks = document.querySelectorAll('[data-day="d' + d + '"]');
+    const dayDone = document.querySelectorAll('[data-day="d' + d + '"]:checked');
+    if (dayTasks.length > 0 && dayTasks.length === dayDone.length) completedDays++;
+  }
+  document.getElementById('s-days').textContent = completedDays;
+
+  // Count projects (rough: check if day 9 complete + day 16 + day 22)
+  let proj = 0;
+  const p1 = document.querySelectorAll('[data-day="d9"]:checked').length === document.querySelectorAll('[data-day="d9"]').length && document.querySelectorAll('[data-day="d9"]').length > 0;
+  const p2 = document.querySelectorAll('[data-day="d16"]:checked').length === document.querySelectorAll('[data-day="d16"]').length && document.querySelectorAll('[data-day="d16"]').length > 0;
+  const p3 = document.querySelectorAll('[data-day="d22"]:checked').length === document.querySelectorAll('[data-day="d22"]').length && document.querySelectorAll('[data-day="d22"]').length > 0;
+  if (p1) proj++;
+  if (p2) proj++;
+  if (p3) proj++;
+  document.getElementById('s-proj').textContent = proj + '/3';
+
+  // Estimate apps based on application task completions
+  let appCount = 0;
+  const appDays = ['d23','d24','d25','d26','d27','d28','d29','d30'];
+  appDays.forEach(day => {
+    const checked = document.querySelectorAll('[data-day="' + day + '"]:checked').length;
+    appCount += checked * 5;
+  });
+  document.getElementById('s-apps').textContent = Math.min(appCount, 99) + (appCount >= 65 ? '+ ✓' : '+');
+
+  // Phase label
+  const phases = [[1,7,'Phase 1: Foundation'],[8,16,'Phase 2: Core Stack'],[17,25,'Phase 3: Advanced + Build'],[26,30,'Phase 4: Full Send']];
+  let label = 'Phase 1: Foundation';
+  phases.forEach(([start, end, name]) => {
+    if (completedDays >= start - 1) label = name;
+  });
+  document.getElementById('p-phase').textContent = label;
+}
+
+function checkDayCompletion() {
+  for (let d = 1; d <= 30; d++) {
+    const dayTasks = document.querySelectorAll('[data-day="d' + d + '"]');
+    const dayDone = document.querySelectorAll('[data-day="d' + d + '"]:checked');
+    const card = document.getElementById('card-d' + d);
+    if (card && dayTasks.length > 0 && dayTasks.length === dayDone.length) {
+      card.classList.add('done');
+    } else if (card) {
+      card.classList.remove('done');
+    }
+  }
+}
+
+function toggleDay(id) {
+  const body = document.getElementById('body-' + id);
+  const tog = document.getElementById('tog-' + id);
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  tog.classList.toggle('open', !isOpen);
+  state.expanded[id] = !isOpen;
+  saveState();
+}
+
+// Auto-open first day on load
+window.addEventListener('load', () => {
+  loadState();
+  if (!Object.keys(state.expanded).length) {
+    toggleDay('d1');
+  } else {
+    Object.keys(state.expanded).forEach(id => {
+      if (state.expanded[id]) {
+        const body = document.getElementById('body-' + id);
+        const tog = document.getElementById('tog-' + id);
+        if (body) body.classList.add('open');
+        if (tog) tog.classList.add('open');
+      }
+    });
+  }
+});
+</script>
+</body>
+</html>
