@@ -88,6 +88,22 @@
   .apply-url a{color:#2563EB;text-decoration:none}
   .apply-url a:hover{text-decoration:underline}
   .apply-note{font-size:0.65rem;color:#6B7280;margin-top:2px}
+  
+  /* Sync UI Styles */
+  .sync-btn { background:#F59E0B; color:#111827; border:none; padding:4px 10px; border-radius:4px; font-size:0.65rem; font-family:'Space Mono',monospace; font-weight:700; cursor:pointer; margin-left:10px; transition: background 0.2s; }
+  .sync-btn:hover { background:#D97706; }
+  .modal-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(17,24,39,0.8); z-index:999; display:none; justify-content:center; align-items:center; padding:1rem; }
+  .modal-overlay.open { display:flex; }
+  .modal { background:#fff; border-radius:12px; width:100%; max-width:400px; padding:1.5rem; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+  .modal-title { font-size:1.1rem; font-weight:700; margin-bottom:0.5rem; color:#111827; }
+  .modal-desc { font-size:0.8rem; color:#6B7280; margin-bottom:1.5rem; line-height:1.5; }
+  .sync-input { width:100%; padding:0.75rem; border:1px solid #D1D5DB; border-radius:6px; font-family:'Space Mono',monospace; font-size:0.75rem; margin-bottom:1rem; background:#F9FAFB; color:#374151; word-break:break-all; }
+  .modal-actions { display:flex; gap:0.5rem; }
+  .btn-primary { flex:1; background:#111827; color:#fff; border:none; padding:0.75rem; border-radius:6px; font-weight:600; cursor:pointer; font-size:0.8rem; transition: background 0.2s; }
+  .btn-primary:hover { background:#374151; }
+  .btn-secondary { flex:1; background:#F3F4F6; color:#374151; border:none; padding:0.75rem; border-radius:6px; font-weight:600; cursor:pointer; font-size:0.8rem; transition: background 0.2s; }
+  .btn-secondary:hover { background:#E5E7EB; }
+
   @media(max-width:600px){
     .stats-row{grid-template-columns:repeat(2,1fr)}
     .header-top{flex-direction:column;gap:0.5rem}
@@ -102,7 +118,7 @@
     <div>
       <div class="header-title">
         30-DAY APPLIED AI GRIND 
-        <span id="sync-indicator" class="sync-status">Connecting...</span>
+        <button class="sync-btn" onclick="openSyncModal()">SYNC DEVICES</button>
       </div>
       <div class="header-sub">Apr 25 → May 24, 2026 &nbsp;|&nbsp; Internship or bust</div>
     </div>
@@ -956,141 +972,73 @@
 
 </div>
 
-<!-- FIREBASE CLOUD SYNC LOGIC -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-  import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-  import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+<!-- SYNC MODAL -->
+<div class="modal-overlay" id="sync-modal">
+  <div class="modal">
+    <div class="modal-title">Sync Your Progress</div>
+    <div class="modal-desc">Generate a secure link containing your current progress. Open this link on your phone or another computer to instantly transfer your checkboxes.</div>
+    <input type="text" id="sync-url" class="sync-input" readonly>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="copySyncLink()">Copy Link</button>
+      <button class="btn-secondary" onclick="closeSyncModal()">Close</button>
+    </div>
+  </div>
+</div>
 
-  // 1. Setup Environment
+<!-- LOCAL STORAGE & URL SYNC LOGIC -->
+<script>
   const STORAGE_KEY = 'grind30_state';
   let state = { tasks: {}, expanded: {}, apps: 0 };
-  let userId = null;
-  let isInitialized = false;
-  
-  const statusIndicator = document.getElementById('sync-indicator');
 
-  // Attempt to load Firebase environment variables (defaults for local fallback)
-  const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
-  const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-
-  let app, auth, db;
-  if (firebaseConfig && Object.keys(firebaseConfig).length > 0) {
-    app = initializeApp(firebaseConfig);
-    auth = getAuth(app);
-    db = getFirestore(app);
-  }
-
-  // 2. Authentication Logic
-  const initAuth = async () => {
-    if (!auth) {
-       // Running locally without cloud setup: fallback to standard localStorage
-       statusIndicator.textContent = "Offline (Local Only)";
-       statusIndicator.style.color = "#9CA3AF";
-       loadLocalState();
-       initUI();
-       return;
+  // 1. Core State Functions
+  function loadState() {
+    // A. Check if we are receiving state via URL Link
+    const urlParams = new URLSearchParams(window.location.search);
+    const syncData = urlParams.get('sync');
+    
+    if (syncData) {
+      try {
+        const parsed = JSON.parse(atob(syncData)); // Decode Base64
+        if (parsed && typeof parsed === 'object') {
+          state = Object.assign(state, parsed);
+          saveState(); // Save to new device's local storage immediately
+          
+          // Clean the URL so refreshing doesn't cause issues
+          window.history.replaceState({}, document.title, window.location.pathname);
+          alert("✅ Progress successfully synced from link!");
+        }
+      } catch(e) {
+        console.error("Invalid sync link data", e);
+        alert("❌ Failed to read sync link. The link might be broken.");
+      }
+    } else {
+      // B. Normal load from Local Storage
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          state = Object.assign(state, JSON.parse(raw));
+        }
+      } catch(e) {}
     }
-    try {
-      if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-        await signInWithCustomToken(auth, __initial_auth_token);
-      } else {
-        await signInAnonymously(auth);
-      }
-    } catch(err) {
-      console.error("Auth error, falling back to local:", err);
-      statusIndicator.textContent = "Sync Error";
-      statusIndicator.style.color = "#EF4444";
-      loadLocalState();
-      initUI();
-    }
-  };
-
-  // 3. Real-time Database Sync setup
-  if (auth) {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        userId = user.uid;
-        setupCloudSync();
-      }
-    });
-    initAuth();
-  } else {
-    // If no auth at all, initialize UI anyway
-    window.addEventListener('load', () => { loadLocalState(); initUI(); });
-  }
-
-  function setupCloudSync() {
-    if (!userId || !db) return;
-    const docRef = doc(db, 'artifacts', appId, 'users', userId, 'data', 'grind_state');
-
-    // onSnapshot listens for real-time changes
-    onSnapshot(docRef, (snapshot) => {
-      if (snapshot.exists()) {
-        state = snapshot.data();
-        applyState();
-        statusIndicator.textContent = "Cloud Synced";
-        statusIndicator.style.color = "#10B981"; // Green
-      } else {
-        // No data in cloud yet. Bring local data up to cloud.
-        loadLocalState();
-        saveState();
-      }
-      
-      if (!isInitialized) {
-        isInitialized = true;
-        initUI();
-      }
-    }, (error) => {
-      console.error("Sync stream error:", error);
-      statusIndicator.textContent = "Sync Failed";
-      statusIndicator.style.color = "#EF4444"; // Red
-      if (!isInitialized) {
-        loadLocalState();
-        initUI();
-        isInitialized = true;
-      }
-    });
-  }
-
-  // 4. State Management Actions
-  function loadLocalState() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        state = Object.assign(state, JSON.parse(raw));
-        applyState();
-      }
-    } catch(e) {}
+    
+    applyState();
   }
 
   function saveState() {
-    // 1. Always save locally as a backup
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
-
-    // 2. Push to cloud database if available
-    if (userId && db) {
-       statusIndicator.textContent = "Saving...";
-       statusIndicator.style.color = "#F59E0B"; // Amber
-       const docRef = doc(db, 'artifacts', appId, 'users', userId, 'data', 'grind_state');
-       setDoc(docRef, state, { merge: true })
-        .then(() => {
-          statusIndicator.textContent = "Cloud Synced";
-          statusIndicator.style.color = "#10B981"; 
-        })
-        .catch(err => console.error("Cloud save error:", err));
-    }
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch(e) {}
   }
 
   function applyState() {
-    // Clear all first to prevent phantom checks if cloud state removed a check
+    // Clear all first to prevent UI ghosting
     document.querySelectorAll('.task-check').forEach(cb => {
       cb.checked = false;
       const txt = cb.closest('.task-item').querySelector('.task-text');
       if (txt) txt.classList.remove('done');
     });
 
-    // Apply accurate cloud state
+    // Apply accurate state
     Object.keys(state.tasks).forEach(id => {
       const cb = document.querySelector('[data-id="' + id + '"]');
       if (cb && state.tasks[id]) {
@@ -1103,8 +1051,8 @@
     checkDayCompletion();
   }
 
-  // 5. User Interaction Handlers (Attached to window so HTML can trigger them)
-  window.taskChanged = function(cb) {
+  // 2. User Interaction Functions
+  function taskChanged(cb) {
     const id = cb.dataset.id;
     const txt = cb.closest('.task-item').querySelector('.task-text');
     if (cb.checked) {
@@ -1116,20 +1064,47 @@
     }
     updateStats();
     checkDayCompletion();
-    saveState(); // Triggers cloud push
+    saveState();
   }
 
-  window.toggleDay = function(id) {
+  function toggleDay(id) {
     const body = document.getElementById('body-' + id);
     const tog = document.getElementById('tog-' + id);
     const isOpen = body.classList.contains('open');
     body.classList.toggle('open', !isOpen);
     tog.classList.toggle('open', !isOpen);
     state.expanded[id] = !isOpen;
-    saveState(); // Triggers cloud push
+    saveState();
   }
 
-  // 6. UI Updates
+  // 3. Sync Modal Functions
+  function openSyncModal() {
+    const modal = document.getElementById('sync-modal');
+    const input = document.getElementById('sync-url');
+    
+    // Generate base64 string of current progress
+    const encodedState = btoa(JSON.stringify(state));
+    
+    // Construct the shareable link
+    const baseUrl = window.location.origin + window.location.pathname;
+    input.value = `${baseUrl}?sync=${encodedState}`;
+    
+    modal.classList.add('open');
+  }
+
+  function closeSyncModal() {
+    document.getElementById('sync-modal').classList.remove('open');
+  }
+
+  function copySyncLink() {
+    const input = document.getElementById('sync-url');
+    input.select();
+    document.execCommand('copy'); // Reliable older method for iFrames/localfiles
+    alert("Link copied! Send this link to your phone/laptop and open it to transfer your progress.");
+    closeSyncModal();
+  }
+
+  // 4. UI Updates
   function updateStats() {
     const all = document.querySelectorAll('.task-check');
     const done = document.querySelectorAll('.task-check:checked');
@@ -1188,9 +1163,11 @@
     }
   }
 
-  function initUI() {
+  // 5. Initialize
+  window.addEventListener('load', () => {
+    loadState();
     if (!Object.keys(state.expanded).length) {
-      window.toggleDay('d1');
+      toggleDay('d1');
     } else {
       Object.keys(state.expanded).forEach(id => {
         if (state.expanded[id]) {
@@ -1201,8 +1178,7 @@
         }
       });
     }
-  }
-
+  });
 </script>
 </body>
 </html>
