@@ -17,9 +17,8 @@
     --font-head:'Syne',sans-serif;--font-mono:'Space Mono',monospace;
   }
   body{font-family:'Syne',sans-serif;background:#F9FAFB;color:#111827;min-height:100vh;padding-top:0}
-  .header{background:#111827;color:#fff;padding:2rem 1.5rem 1.5rem;position:sticky;top:0;z-index:45;margin-left:0;transition:margin-left 0.3s ease}
-  .header.sidebar-open{margin-left:320px}
-  .header.sidebar-collapsed{margin-left:0}
+  .header{background:#111827;color:#fff;padding:2rem 1.5rem 1.5rem 3.5rem;position:sticky;top:0;z-index:45;margin-left:320px;transition:all 0.3s ease}
+  .header.sidebar-collapsed{margin-left:0;padding-left:3.5rem}
   .header-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem}
   .header-title{font-size:1.1rem;font-weight:700;letter-spacing:-0.5px;color:#fff}
   .header-sub{font-size:0.7rem;color:#9CA3AF;font-family:'Space Mono',monospace;margin-top:2px}
@@ -33,8 +32,8 @@
   .progress-text{font-size:0.65rem;color:#9CA3AF;font-family:'Space Mono',monospace}
   .sidebar-wrapper{position:fixed;left:0;top:0;height:100vh;width:320px;background:#fff;border-right:1px solid #E5E7EB;overflow-y:auto;z-index:50;transition:left 0.3s ease}
   .sidebar-wrapper.collapsed{left:-320px}
-  .sidebar-toggle{position:fixed;left:320px;top:1rem;width:40px;height:40px;background:#111827;color:#F59E0B;border:none;border-radius:6px;cursor:pointer;font-size:1.3rem;display:flex;align-items:center;justify-content:center;z-index:49;transition:left 0.3s ease;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,0.15)}
-  .sidebar-wrapper.collapsed ~ .sidebar-toggle{left:0}
+  .sidebar-toggle{position:fixed;left:322px;top:0.6rem;width:36px;height:36px;background:#1F2937;color:#F59E0B;border:1px solid #374151;border-radius:6px;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;z-index:51;transition:left 0.3s ease;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,0.2)}
+  .sidebar-wrapper.collapsed ~ .sidebar-toggle{left:0.5rem}
   .sidebar{padding:1.5rem 1rem}
   .sidebar-title{font-size:0.8rem;font-family:'Space Mono',monospace;color:#374151;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:1.5rem;border-bottom:1px solid #E5E7EB;padding-bottom:0.75rem}
   .progress-section{background:#F9FAFB;border-radius:8px;padding:1rem;margin-bottom:1rem}
@@ -58,8 +57,8 @@
   .legend-section{border-top:1px solid #E5E7EB;padding-top:0.75rem}
   .legend-item{display:flex;align-items:center;gap:0.5rem;font-size:0.75rem;color:#374151;margin-bottom:0.5rem}
   .legend-dot{width:10px;height:10px;border-radius:3px}
-  .main{max-width:900px;padding:1.5rem 1rem;transition:margin-left 0.3s ease;margin-left:320px}
-  .main.sidebar-collapsed{margin-left:0;margin:0 auto;padding:1.5rem 1rem}
+  .main{max-width:900px;padding:1.5rem 1rem;transition:margin 0.3s ease;margin-left:max(320px, calc(50vw - 290px));margin-right:auto}
+  .main.sidebar-collapsed{margin-left:auto;margin-right:auto;padding:1.5rem 1rem}
   .phase{margin-bottom:2rem}
   .phase-header{display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:2px solid #111827}
   .phase-num{background:#111827;color:#F59E0B;font-family:'Space Mono',monospace;font-size:0.65rem;padding:4px 8px;border-radius:4px;font-weight:700;white-space:nowrap}
@@ -136,7 +135,7 @@
 </style>
 </head>
 <body>
- 
+
 <div class="header">
   <div class="header-top">
     <div>
@@ -162,7 +161,7 @@
     <span class="progress-text" id="p-phase">Phase 1: Foundation</span>
   </div>
 </div>
- 
+
 <div class="sidebar-wrapper">
   <div class="sidebar">
     <div class="sidebar-title">Progress Tracker</div>
@@ -174,7 +173,7 @@
       </div>
       <div class="progress-text-side" id="p-text-side">0 / 0</div>
     </div>
- 
+
     <div class="stats-section">
       <div class="stat-side">
         <div class="stat-label-side">Days Completed</div>
@@ -189,12 +188,12 @@
         <div class="stat-value-side stat-wasted" id="stat-wasted">0</div>
       </div>
     </div>
- 
+
     <div class="calendar-section">
       <div class="calendar-title">30-Day Calendar</div>
       <div class="calendar-grid" id="calendar-grid"></div>
     </div>
- 
+
     <div class="legend-section">
       <div class="legend-item">
         <div class="legend-dot" style="background:#059669"></div>
@@ -211,11 +210,11 @@
     </div>
   </div>
 </div>
- 
+
 <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()" title="Toggle sidebar">◀</button>
- 
+
 <div class="main">
- 
+
   <!-- PROJECTS -->
   <div class="projects-section">
     <div class="projects-title">// 3 portfolio projects</div>
@@ -246,7 +245,7 @@
       </div>
     </div>
   </div>
- 
+
   <!-- PHASE 1 -->
   <div class="phase" id="phase-1">
     <div class="phase-header">
@@ -254,7 +253,7 @@
       <div class="phase-title">Foundation Sprint</div>
       <div class="phase-meta">May 2 — May 8 &nbsp;|&nbsp; Python · ML · LangChain setup</div>
     </div>
- 
+
     <!-- Day 1 -->
     <div class="day-card" id="card-d1">
       <div class="day-header" onclick="toggleDay('d1')">
@@ -275,7 +274,7 @@
         </ul>
       </div>
     </div>
- 
+
     <!-- Day 2 -->
     <div class="day-card" id="card-d2">
       <div class="day-header" onclick="toggleDay('d2')">
@@ -296,7 +295,7 @@
         </ul>
       </div>
     </div>
- 
+
     <!-- Day 3 -->
     <div class="day-card" id="card-d3">
       <div class="day-header" onclick="toggleDay('d3')">
@@ -319,7 +318,7 @@
         </ul>
       </div>
     </div>
- 
+
     <!-- Day 4 -->
     <div class="day-card" id="card-d4">
       <div class="day-header" onclick="toggleDay('d4')">
@@ -341,7 +340,7 @@
         </ul>
       </div>
     </div>
- 
+
     <!-- Day 5 -->
     <div class="day-card" id="card-d5">
       <div class="day-header" onclick="toggleDay('d5')">
@@ -364,7 +363,7 @@
         </ul>
       </div>
     </div>
- 
+
     <!-- Day 6 -->
     <div class="day-card" id="card-d6">
       <div class="day-header" onclick="toggleDay('d6')">
@@ -387,7 +386,7 @@
         </ul>
       </div>
     </div>
- 
+
     <!-- Day 7 -->
     <div class="day-card" id="card-d7">
       <div class="day-header" onclick="toggleDay('d7')">
@@ -408,9 +407,9 @@
         </ul>
       </div>
     </div>
- 
+
   </div>
- 
+
   <!-- PHASE 2 -->
   <div class="phase" id="phase-2">
     <div class="phase-header">
@@ -418,7 +417,7 @@
       <div class="phase-title">Core AI Stack + RAG Mastery</div>
       <div class="phase-meta">May 9 — May 17 &nbsp;|&nbsp; Agents · RAG · Deployment</div>
     </div>
- 
+
     <!-- Day 8 -->
     <div class="day-card" id="card-d8">
       <div class="day-header" onclick="toggleDay('d8')">
@@ -439,7 +438,7 @@
         </ul>
       </div>
     </div>
- 
+
     <!-- Day 9 -->
     <div class="day-card" id="card-d9">
       <div class="day-header" onclick="toggleDay('d9')">
@@ -461,7 +460,7 @@
         <div style="background:#D1FAE5;border-radius:6px;padding:8px 10px;margin-top:10px;font-size:0.75rem;color:#065F46;font-weight:600">✓ PROJECT 1 COMPLETE — DocTalk is live</div>
       </div>
     </div>
- 
+
     <!-- Day 10 -->
     <div class="day-card" id="card-d10">
       <div class="day-header" onclick="toggleDay('d10')">
@@ -483,7 +482,7 @@
         </ul>
       </div>
     </div>
- 
+
     <!-- Day 11 -->
     <div class="day-card" id="card-d11">
       <div class="day-header" onclick="toggleDay('d11')">
@@ -505,7 +504,7 @@
         </ul>
       </div>
     </div>
- 
+
     <!-- Day 12 -->
     <div class="day-card" id="card-d12">
       <div class="day-header" onclick="toggleDay('d12')">
@@ -527,7 +526,7 @@
         </ul>
       </div>
     </div>
- 
+
     <!-- Day 13 -->
     <div class="day-card" id="card-d13">
       <div class="day-header" onclick="toggleDay('d13')">
@@ -549,7 +548,7 @@
         </ul>
       </div>
     </div>
- 
+
     <!-- Day 14 -->
     <div class="day-card" id="card-d14">
       <div class="day-header" onclick="toggleDay('d14')">
@@ -571,7 +570,7 @@
         </ul>
       </div>
     </div>
- 
+
     <!-- Day 15 -->
     <div class="day-card" id="card-d15">
       <div class="day-header" onclick="toggleDay('d15')">
@@ -592,7 +591,7 @@
         </ul>
       </div>
     </div>
- 
+
     <!-- Day 16 -->
     <div class="day-card" id="card-d16">
       <div class="day-header" onclick="toggleDay('d16')">
@@ -614,7 +613,7 @@
       </div>
     </div>
   </div>
- 
+
   <!-- PHASE 3 -->
   <div class="phase" id="phase-3">
     <div class="phase-header">
@@ -622,7 +621,7 @@
       <div class="phase-title">Advanced AI + Project 3</div>
       <div class="phase-meta">May 18 — May 26 &nbsp;|&nbsp; Fine-tuning · Deployment · Polish</div>
     </div>
- 
+
     <!-- Day 17 -->
     <div class="day-card" id="card-d17">
       <div class="day-header" onclick="toggleDay('d17')">
@@ -644,7 +643,7 @@
         </ul>
       </div>
     </div>
- 
+
     <!-- Day 18 -->
     <div class="day-card" id="card-d18">
       <div class="day-header" onclick="toggleDay('d18')">
@@ -666,7 +665,7 @@
         </ul>
       </div>
     </div>
- 
+
     <!-- Day 19 -->
     <div class="day-card" id="card-d19">
       <div class="day-header" onclick="toggleDay('d19')">
@@ -687,7 +686,7 @@
         </ul>
       </div>
     </div>
- 
+
     <!-- Day 20 -->
     <div class="day-card" id="card-d20">
       <div class="day-header" onclick="toggleDay('d20')">
@@ -709,7 +708,7 @@
         </ul>
       </div>
     </div>
- 
+
     <!-- Day 21 -->
     <div class="day-card" id="card-d21">
       <div class="day-header" onclick="toggleDay('d21')">
@@ -731,7 +730,7 @@
         </ul>
       </div>
     </div>
- 
+
     <!-- Day 22 -->
     <div class="day-card" id="card-d22">
       <div class="day-header" onclick="toggleDay('d22')">
@@ -752,7 +751,7 @@
         <div style="background:#D1FAE5;border-radius:6px;padding:8px 10px;margin-top:10px;font-size:0.75rem;color:#065F46;font-weight:600">✓ PROJECT 3 COMPLETE — NicheBot is live. All 3 projects done.</div>
       </div>
     </div>
- 
+
     <!-- Day 23 -->
     <div class="day-card" id="card-d23">
       <div class="day-header" onclick="toggleDay('d23')">
@@ -773,7 +772,7 @@
         </ul>
       </div>
     </div>
- 
+
     <!-- Day 24 -->
     <div class="day-card" id="card-d24">
       <div class="day-header" onclick="toggleDay('d24')">
@@ -795,7 +794,7 @@
         </ul>
       </div>
     </div>
- 
+
     <!-- Day 25 -->
     <div class="day-card" id="card-d25">
       <div class="day-header" onclick="toggleDay('d25')">
@@ -818,7 +817,7 @@
       </div>
     </div>
   </div>
- 
+
   <!-- PHASE 4 -->
   <div class="phase" id="phase-4">
     <div class="phase-header">
@@ -826,7 +825,7 @@
       <div class="phase-title">Full Send — Applications + Interview Prep</div>
       <div class="phase-meta">May 27 — May 31 &nbsp;|&nbsp; Apply hard. Prep harder.</div>
     </div>
- 
+
     <!-- Day 26 -->
     <div class="day-card" id="card-d26">
       <div class="day-header" onclick="toggleDay('d26')">
@@ -845,7 +844,7 @@
         </ul>
       </div>
     </div>
- 
+
     <!-- Day 27 -->
     <div class="day-card" id="card-d27">
       <div class="day-header" onclick="toggleDay('d27')">
@@ -864,7 +863,7 @@
         </ul>
       </div>
     </div>
- 
+
     <!-- Day 28 -->
     <div class="day-card" id="card-d28">
       <div class="day-header" onclick="toggleDay('d28')">
@@ -883,7 +882,7 @@
         </ul>
       </div>
     </div>
- 
+
     <!-- Day 29 -->
     <div class="day-card" id="card-d29">
       <div class="day-header" onclick="toggleDay('d29')">
@@ -902,7 +901,7 @@
         </ul>
       </div>
     </div>
- 
+
     <!-- Day 30 -->
     <div class="day-card" id="card-d30">
       <div class="day-header" onclick="toggleDay('d30')">
@@ -925,7 +924,7 @@
       </div>
     </div>
   </div>
- 
+
   <!-- RESOURCES -->
   <div class="resources-section">
     <div class="resources-title">// free resources master list</div>
@@ -992,7 +991,7 @@
       </div>
     </div>
   </div>
- 
+
   <!-- APPLICATIONS -->
   <div class="applications-section">
     <div class="apply-title">// where to apply</div>
@@ -1039,14 +1038,14 @@
       </div>
     </div>
   </div>
- 
+
 </div>
- 
+
 <script>
 const STORAGE_KEY = 'grind30_state';
- 
+
 let state = { tasks: {}, expanded: {}, apps: 0 };
- 
+
 function loadState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -1056,13 +1055,13 @@ function loadState() {
     }
   } catch(e) {}
 }
- 
+
 function saveState() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   } catch(e) {}
 }
- 
+
 function applyState() {
   Object.keys(state.tasks).forEach(id => {
     const cb = document.querySelector('[data-id="' + id + '"]');
@@ -1075,7 +1074,7 @@ function applyState() {
   updateStats();
   checkDayCompletion();
 }
- 
+
 function taskChanged(cb) {
   const id = cb.dataset.id;
   const txt = cb.closest('.task-item').querySelector('.task-text');
@@ -1090,21 +1089,21 @@ function taskChanged(cb) {
   checkDayCompletion();
   saveState();
 }
- 
+
 function updateStats() {
   const all = document.querySelectorAll('.task-check');
   const done = document.querySelectorAll('.task-check:checked');
   const total = all.length;
   const count = done.length;
   const pct = total ? Math.round((count / total) * 100) : 0;
- 
+
   document.getElementById('progress-bar').style.width = pct + '%';
   document.getElementById('progress-bar-side').style.width = pct + '%';
   document.getElementById('p-done').textContent = count + ' / ' + total + ' tasks';
   document.getElementById('p-text-side').textContent = count + ' / ' + total;
   document.getElementById('s-tasks').textContent = pct + '%';
   document.getElementById('done-count').textContent = count;
- 
+
   // Count completed days and wasted days
   let completedDays = 0;
   let wastedDays = 0;
@@ -1125,11 +1124,11 @@ function updateStats() {
       }
     }
   }
- 
+
   document.getElementById('s-days').textContent = completedDays;
   document.getElementById('stat-days-side').textContent = completedDays + '/30';
   document.getElementById('stat-wasted').textContent = wastedDays;
- 
+
   // Calculate consecutive streak
   let streak = 0;
   for (let d = 1; d <= 30; d++) {
@@ -1141,7 +1140,7 @@ function updateStats() {
     }
   }
   document.getElementById('stat-streak').textContent = streak;
- 
+
   // Count projects
   let proj = 0;
   const p1 = document.querySelectorAll('[data-day="d9"]:checked').length === document.querySelectorAll('[data-day="d9"]').length && document.querySelectorAll('[data-day="d9"]').length > 0;
@@ -1151,7 +1150,7 @@ function updateStats() {
   if (p2) proj++;
   if (p3) proj++;
   document.getElementById('s-proj').textContent = proj + '/3';
- 
+
   // Estimate apps
   let appCount = 0;
   const appDays = ['d23','d24','d25','d26','d27','d28','d29','d30'];
@@ -1160,10 +1159,10 @@ function updateStats() {
     appCount += checked * 5;
   });
   document.getElementById('s-apps').textContent = Math.min(appCount, 99) + (appCount >= 65 ? '+ ✓' : '+');
- 
+
   // Update calendar
   buildCalendar(dayStats);
- 
+
   // Phase label
   const phases = [[1,7,'Phase 1: Foundation'],[8,16,'Phase 2: Core Stack'],[17,25,'Phase 3: Advanced + Build'],[26,30,'Phase 4: Full Send']];
   let label = 'Phase 1: Foundation';
@@ -1172,18 +1171,18 @@ function updateStats() {
   });
   document.getElementById('p-phase').textContent = label;
 }
- 
+
 function buildCalendar(dayStats) {
   const grid = document.getElementById('calendar-grid');
   grid.innerHTML = '';
- 
+
   for (let d = 1; d <= 30; d++) {
     const stat = dayStats.find(s => s.day === d);
     const cell = document.createElement('div');
     cell.className = 'calendar-day';
     cell.textContent = d;
     cell.title = `Day ${d}`;
- 
+
     if (stat) {
       if (stat.progress === 1) {
         cell.classList.add('complete');
@@ -1196,7 +1195,7 @@ function buildCalendar(dayStats) {
         cell.title = `Day ${d} - No progress`;
       }
     }
- 
+
     cell.addEventListener('click', () => {
       const card = document.getElementById('card-d' + d);
       if (card) {
@@ -1209,11 +1208,11 @@ function buildCalendar(dayStats) {
         }
       }
     });
- 
+
     grid.appendChild(cell);
   }
 }
- 
+
 function checkDayCompletion() {
   for (let d = 1; d <= 30; d++) {
     const dayTasks = document.querySelectorAll('[data-day="d' + d + '"]');
@@ -1226,7 +1225,7 @@ function checkDayCompletion() {
     }
   }
 }
- 
+
 function toggleDay(id) {
   const body = document.getElementById('body-' + id);
   const tog = document.getElementById('tog-' + id);
@@ -1236,7 +1235,7 @@ function toggleDay(id) {
   state.expanded[id] = !isOpen;
   saveState();
 }
- 
+
 function toggleSidebar() {
   const sidebar = document.querySelector('.sidebar-wrapper');
   const header = document.querySelector('.header');
@@ -1250,7 +1249,7 @@ function toggleSidebar() {
   toggle.textContent = sidebar.classList.contains('collapsed') ? '▶' : '◀';
   localStorage.setItem('sidebar_collapsed', sidebar.classList.contains('collapsed'));
 }
- 
+
 // Auto-open first day on load
 window.addEventListener('load', () => {
   loadState();
