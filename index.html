@@ -17,7 +17,9 @@
     --font-head:'Syne',sans-serif;--font-mono:'Space Mono',monospace;
   }
   body{font-family:'Syne',sans-serif;background:#F9FAFB;color:#111827;min-height:100vh;padding-top:0}
-  .header{background:#111827;color:#fff;padding:2rem 1.5rem 1.5rem;position:sticky;top:0;z-index:45;margin-left:320px;transition:margin-left 0.3s ease}
+  .header{background:#111827;color:#fff;padding:2rem 1.5rem 1.5rem;position:sticky;top:0;z-index:45;margin-left:0;transition:margin-left 0.3s ease}
+  .header.sidebar-open{margin-left:320px}
+  .header.sidebar-collapsed{margin-left:0}
   .header-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem}
   .header-title{font-size:1.1rem;font-weight:700;letter-spacing:-0.5px;color:#fff}
   .header-sub{font-size:0.7rem;color:#9CA3AF;font-family:'Space Mono',monospace;margin-top:2px}
@@ -56,10 +58,8 @@
   .legend-section{border-top:1px solid #E5E7EB;padding-top:0.75rem}
   .legend-item{display:flex;align-items:center;gap:0.5rem;font-size:0.75rem;color:#374151;margin-bottom:0.5rem}
   .legend-dot{width:10px;height:10px;border-radius:3px}
-  .sidebar-wrapper.collapsed ~ .main{margin-left:0}
-  .sidebar-wrapper.collapsed ~ .sidebar-toggle{left:0}
-  .header.sidebar-collapsed{margin-left:0}
-  .main{max-width:900px;margin:0 auto;padding:1.5rem 1rem;margin-left:340px;transition:margin-left 0.3s ease}
+  .main{max-width:900px;margin:0 auto;padding:1.5rem 1rem;margin-left:0;transition:margin-left 0.3s ease}
+  .main.sidebar-open{margin-left:320px}
   .phase{margin-bottom:2rem}
   .phase-header{display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:2px solid #111827}
   .phase-num{background:#111827;color:#F59E0B;font-family:'Space Mono',monospace;font-size:0.65rem;padding:4px 8px;border-radius:4px;font-weight:700;white-space:nowrap}
@@ -120,16 +120,16 @@
   @media(max-width:1200px){
     .sidebar-wrapper{width:280px}
     .sidebar-toggle{left:280px}
-    .main{margin-left:300px}
-    .header{margin-left:300px}
-    .sidebar-wrapper.collapsed ~ .main{margin-left:0}
-    .sidebar-wrapper.collapsed ~ .header{margin-left:0}
+    .main.sidebar-open{margin-left:280px}
+    .header.sidebar-open{margin-left:280px}
   }
   @media(max-width:900px){
     .sidebar-wrapper{position:relative;width:100%;height:auto;border-right:none;border-top:1px solid #E5E7EB;margin-top:2rem}
     .sidebar-toggle{display:none}
     .main{margin-left:0;max-width:100%}
+    .main.sidebar-open{margin-left:0}
     .header{margin-left:0}
+    .header.sidebar-open{margin-left:0}
     .stats-row{grid-template-columns:repeat(2,1fr)}
     .header-top{flex-direction:column;gap:0.5rem}
   }
@@ -1240,9 +1240,13 @@ function toggleDay(id) {
 function toggleSidebar() {
   const sidebar = document.querySelector('.sidebar-wrapper');
   const header = document.querySelector('.header');
+  const main = document.querySelector('.main');
   const toggle = document.getElementById('sidebar-toggle');
+  
   sidebar.classList.toggle('collapsed');
   header.classList.toggle('sidebar-collapsed');
+  main.classList.toggle('sidebar-open');
+  
   toggle.textContent = sidebar.classList.contains('collapsed') ? '▶' : '◀';
   localStorage.setItem('sidebar_collapsed', sidebar.classList.contains('collapsed'));
 }
@@ -1255,11 +1259,18 @@ window.addEventListener('load', () => {
   const sidebarCollapsed = localStorage.getItem('sidebar_collapsed') === 'true';
   const sidebar = document.querySelector('.sidebar-wrapper');
   const header = document.querySelector('.header');
+  const main = document.querySelector('.main');
   const toggle = document.getElementById('sidebar-toggle');
+  
   if (sidebarCollapsed) {
     sidebar.classList.add('collapsed');
     header.classList.add('sidebar-collapsed');
-    toggle.textContent = '▶';
+    // Don't add sidebar-open class if collapsed
+  } else {
+    // Add sidebar-open class if not collapsed (sidebar is visible)
+    main.classList.add('sidebar-open');
+    header.classList.add('sidebar-open');
+    toggle.textContent = '◀';
   }
   
   if (!Object.keys(state.expanded).length) {
