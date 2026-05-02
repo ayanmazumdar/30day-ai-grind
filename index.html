@@ -58,8 +58,8 @@
   .legend-section{border-top:1px solid #E5E7EB;padding-top:0.75rem}
   .legend-item{display:flex;align-items:center;gap:0.5rem;font-size:0.75rem;color:#374151;margin-bottom:0.5rem}
   .legend-dot{width:10px;height:10px;border-radius:3px}
-  .main{max-width:900px;margin:0 auto;padding:1.5rem 1rem;margin-left:0;transition:margin-left 0.3s ease}
-  .main.sidebar-open{margin-left:320px}
+  .main{max-width:900px;padding:1.5rem 1rem;transition:margin-left 0.3s ease;margin-left:320px}
+  .main.sidebar-collapsed{margin-left:0;margin:0 auto;padding:1.5rem 1rem}
   .phase{margin-bottom:2rem}
   .phase-header{display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:2px solid #111827}
   .phase-num{background:#111827;color:#F59E0B;font-family:'Space Mono',monospace;font-size:0.65rem;padding:4px 8px;border-radius:4px;font-weight:700;white-space:nowrap}
@@ -1245,7 +1245,7 @@ function toggleSidebar() {
   
   sidebar.classList.toggle('collapsed');
   header.classList.toggle('sidebar-collapsed');
-  main.classList.toggle('sidebar-open');
+  main.classList.toggle('sidebar-collapsed');
   
   toggle.textContent = sidebar.classList.contains('collapsed') ? '▶' : '◀';
   localStorage.setItem('sidebar_collapsed', sidebar.classList.contains('collapsed'));
@@ -1265,11 +1265,9 @@ window.addEventListener('load', () => {
   if (sidebarCollapsed) {
     sidebar.classList.add('collapsed');
     header.classList.add('sidebar-collapsed');
-    // Don't add sidebar-open class if collapsed
+    main.classList.add('sidebar-collapsed');
+    toggle.textContent = '▶';
   } else {
-    // Add sidebar-open class if not collapsed (sidebar is visible)
-    main.classList.add('sidebar-open');
-    header.classList.add('sidebar-open');
     toggle.textContent = '◀';
   }
   
