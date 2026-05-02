@@ -17,7 +17,7 @@
     --font-head:'Syne',sans-serif;--font-mono:'Space Mono',monospace;
   }
   body{font-family:'Syne',sans-serif;background:#F9FAFB;color:#111827;min-height:100vh;padding-top:0}
-  .header{background:#111827;color:#fff;padding:2rem 1.5rem 1.5rem 3.5rem;position:sticky;top:0;z-index:45;margin-left:320px;transition:all 0.3s ease}
+  .header{background:#111827;color:#fff;padding:1.5rem 1.5rem 1.5rem 3.5rem;position:sticky;top:0;z-index:45;margin-left:320px;transition:all 0.3s ease}
   .header.sidebar-collapsed{margin-left:0;padding-left:3.5rem}
   .header-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem}
   .header-title{font-size:1.1rem;font-weight:700;letter-spacing:-0.5px;color:#fff}
@@ -118,19 +118,30 @@
   .apply-note{font-size:0.65rem;color:#6B7280;margin-top:2px}
   @media(max-width:1200px){
     .sidebar-wrapper{width:280px}
-    .sidebar-toggle{left:280px}
-    .main.sidebar-open{margin-left:280px}
-    .header.sidebar-open{margin-left:280px}
+    .header{margin-left:280px}
+    .header.sidebar-collapsed{margin-left:0}
+    .sidebar-toggle{left:282px}
+    .sidebar-wrapper.collapsed ~ .sidebar-toggle{left:0.5rem}
+    .main{margin-left:max(280px, calc(50vw - 290px))}
+    .main.sidebar-collapsed{margin-left:auto;margin-right:auto}
   }
   @media(max-width:900px){
-    .sidebar-wrapper{position:relative;width:100%;height:auto;border-right:none;border-top:1px solid #E5E7EB;margin-top:2rem}
-    .sidebar-toggle{display:none}
-    .main{margin-left:0;max-width:100%}
-    .main.sidebar-open{margin-left:0}
-    .header{margin-left:0}
-    .header.sidebar-open{margin-left:0}
+    /* On mobile, sidebar is a fixed overlay drawer */
+    .sidebar-wrapper{position:fixed;left:-100vw;top:0;width:280px;height:100vh;z-index:100;transition:left 0.3s ease;box-shadow:2px 0 16px rgba(0,0,0,0.18)}
+    .sidebar-wrapper.mobile-open{left:0}
+    /* Overlay backdrop */
+    .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:99}
+    .sidebar-overlay.active{display:block}
+    /* Toggle is a hamburger in top-left of header */
+    .sidebar-toggle{left:0.75rem;top:0.75rem;width:36px;height:36px;z-index:101}
+    /* Header and main take full width, no sidebar offset */
+    .header{margin-left:0;padding-left:3.5rem;padding-top:1rem;padding-bottom:1rem}
+    .header.sidebar-collapsed{margin-left:0;padding-left:3.5rem}
+    .main{margin-left:auto;margin-right:auto;max-width:100%;padding:1rem}
+    .main.sidebar-collapsed{margin-left:auto;margin-right:auto}
     .stats-row{grid-template-columns:repeat(2,1fr)}
     .header-top{flex-direction:column;gap:0.5rem}
+    .phase-meta{display:none}
   }
 </style>
 </head>
@@ -211,7 +222,8 @@
   </div>
 </div>
 
-<button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()" title="Toggle sidebar">◀</button>
+<button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()" title="Toggle sidebar">☰</button>
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
 
 <div class="main">
 
@@ -1236,40 +1248,59 @@ function toggleDay(id) {
   saveState();
 }
 
+function isMobile() {
+  return window.innerWidth <= 900;
+}
+
 function toggleSidebar() {
   const sidebar = document.querySelector('.sidebar-wrapper');
   const header = document.querySelector('.header');
   const main = document.querySelector('.main');
   const toggle = document.getElementById('sidebar-toggle');
-  
-  sidebar.classList.toggle('collapsed');
-  header.classList.toggle('sidebar-collapsed');
-  main.classList.toggle('sidebar-collapsed');
-  
-  toggle.textContent = sidebar.classList.contains('collapsed') ? '▶' : '◀';
-  localStorage.setItem('sidebar_collapsed', sidebar.classList.contains('collapsed'));
+  const overlay = document.getElementById('sidebar-overlay');
+
+  if (isMobile()) {
+    // Mobile: overlay drawer
+    const isOpen = sidebar.classList.contains('mobile-open');
+    sidebar.classList.toggle('mobile-open', !isOpen);
+    overlay.classList.toggle('active', !isOpen);
+    toggle.textContent = '☰';
+  } else {
+    // Desktop: collapsible with margin shift
+    sidebar.classList.toggle('collapsed');
+    header.classList.toggle('sidebar-collapsed');
+    main.classList.toggle('sidebar-collapsed');
+    const isCollapsed = sidebar.classList.contains('collapsed');
+    toggle.textContent = isCollapsed ? '▶' : '◀';
+    localStorage.setItem('sidebar_collapsed', isCollapsed);
+  }
 }
 
 // Auto-open first day on load
 window.addEventListener('load', () => {
   loadState();
-  
-  // Restore sidebar state
-  const sidebarCollapsed = localStorage.getItem('sidebar_collapsed') === 'true';
+
   const sidebar = document.querySelector('.sidebar-wrapper');
   const header = document.querySelector('.header');
   const main = document.querySelector('.main');
   const toggle = document.getElementById('sidebar-toggle');
-  
-  if (sidebarCollapsed) {
-    sidebar.classList.add('collapsed');
-    header.classList.add('sidebar-collapsed');
-    main.classList.add('sidebar-collapsed');
-    toggle.textContent = '▶';
+
+  if (!isMobile()) {
+    // Restore desktop sidebar collapse state
+    const sidebarCollapsed = localStorage.getItem('sidebar_collapsed') === 'true';
+    if (sidebarCollapsed) {
+      sidebar.classList.add('collapsed');
+      header.classList.add('sidebar-collapsed');
+      main.classList.add('sidebar-collapsed');
+      toggle.textContent = '▶';
+    } else {
+      toggle.textContent = '◀';
+    }
   } else {
-    toggle.textContent = '◀';
+    // Mobile: always start with drawer closed
+    toggle.textContent = '☰';
   }
-  
+
   if (!Object.keys(state.expanded).length) {
     toggleDay('d1');
   } else {
@@ -1282,8 +1313,29 @@ window.addEventListener('load', () => {
       }
     });
   }
-  // Build calendar on load
   updateStats();
+
+  // Re-evaluate on resize (desktop <-> mobile switch)
+  window.addEventListener('resize', () => {
+    const toggle = document.getElementById('sidebar-toggle');
+    const sidebar = document.querySelector('.sidebar-wrapper');
+    const overlay = document.getElementById('sidebar-overlay');
+    if (isMobile()) {
+      // Close mobile drawer cleanly
+      sidebar.classList.remove('mobile-open');
+      overlay.classList.remove('active');
+      toggle.textContent = '☰';
+    } else {
+      // Reset mobile state, restore desktop
+      sidebar.classList.remove('mobile-open');
+      overlay.classList.remove('active');
+      const isCollapsed = localStorage.getItem('sidebar_collapsed') === 'true';
+      sidebar.classList.toggle('collapsed', isCollapsed);
+      document.querySelector('.header').classList.toggle('sidebar-collapsed', isCollapsed);
+      document.querySelector('.main').classList.toggle('sidebar-collapsed', isCollapsed);
+      toggle.textContent = isCollapsed ? '▶' : '◀';
+    }
+  });
 });
 </script>
 </body>
