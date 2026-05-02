@@ -1264,16 +1264,15 @@ function toggleSidebar() {
     const isOpen = sidebar.classList.contains('mobile-open');
     sidebar.classList.toggle('mobile-open', !isOpen);
     overlay.classList.toggle('active', !isOpen);
-    toggle.textContent = '☰';
   } else {
     // Desktop: collapsible with margin shift
     sidebar.classList.toggle('collapsed');
     header.classList.toggle('sidebar-collapsed');
     main.classList.toggle('sidebar-collapsed');
     const isCollapsed = sidebar.classList.contains('collapsed');
-    toggle.textContent = isCollapsed ? '▶' : '◀';
     localStorage.setItem('sidebar_collapsed', isCollapsed);
   }
+  toggle.textContent = '☰';
 }
 
 // Auto-open first day on load
@@ -1285,6 +1284,7 @@ window.addEventListener('load', () => {
   const main = document.querySelector('.main');
   const toggle = document.getElementById('sidebar-toggle');
 
+  toggle.textContent = '☰';
   if (!isMobile()) {
     // Restore desktop sidebar collapse state
     const sidebarCollapsed = localStorage.getItem('sidebar_collapsed') === 'true';
@@ -1292,13 +1292,7 @@ window.addEventListener('load', () => {
       sidebar.classList.add('collapsed');
       header.classList.add('sidebar-collapsed');
       main.classList.add('sidebar-collapsed');
-      toggle.textContent = '▶';
-    } else {
-      toggle.textContent = '◀';
     }
-  } else {
-    // Mobile: always start with drawer closed
-    toggle.textContent = '☰';
   }
 
   if (!Object.keys(state.expanded).length) {
@@ -1321,20 +1315,17 @@ window.addEventListener('load', () => {
     const sidebar = document.querySelector('.sidebar-wrapper');
     const overlay = document.getElementById('sidebar-overlay');
     if (isMobile()) {
-      // Close mobile drawer cleanly
       sidebar.classList.remove('mobile-open');
       overlay.classList.remove('active');
-      toggle.textContent = '☰';
     } else {
-      // Reset mobile state, restore desktop
       sidebar.classList.remove('mobile-open');
       overlay.classList.remove('active');
       const isCollapsed = localStorage.getItem('sidebar_collapsed') === 'true';
       sidebar.classList.toggle('collapsed', isCollapsed);
       document.querySelector('.header').classList.toggle('sidebar-collapsed', isCollapsed);
       document.querySelector('.main').classList.toggle('sidebar-collapsed', isCollapsed);
-      toggle.textContent = isCollapsed ? '▶' : '◀';
     }
+    toggle.textContent = '☰';
   });
 });
 </script>
