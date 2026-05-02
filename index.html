@@ -16,8 +16,8 @@
     --gray-300:#D1D5DB;--gray-500:#6B7280;--gray-700:#374151;--gray-900:#111827;
     --font-head:'Syne',sans-serif;--font-mono:'Space Mono',monospace;
   }
-  body{font-family:'Syne',sans-serif;background:#F9FAFB;color:#111827;min-height:100vh}
-  .header{background:#111827;color:#fff;padding:2rem 1.5rem 1.5rem;position:sticky;top:0;z-index:100}
+  body{font-family:'Syne',sans-serif;background:#F9FAFB;color:#111827;min-height:100vh;padding-top:0}
+  .header{background:#111827;color:#fff;padding:2rem 1.5rem 1.5rem;position:sticky;top:0;z-index:45;margin-left:320px;transition:margin-left 0.3s ease}
   .header-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem}
   .header-title{font-size:1.1rem;font-weight:700;letter-spacing:-0.5px;color:#fff}
   .header-sub{font-size:0.7rem;color:#9CA3AF;font-family:'Space Mono',monospace;margin-top:2px}
@@ -29,7 +29,37 @@
   .progress-bar{background:linear-gradient(90deg,#F59E0B,#EF4444);height:100%;border-radius:100px;transition:width 0.4s ease}
   .progress-label{display:flex;justify-content:space-between;margin-top:6px}
   .progress-text{font-size:0.65rem;color:#9CA3AF;font-family:'Space Mono',monospace}
-  .main{max-width:900px;margin:0 auto;padding:1.5rem 1rem}
+  .sidebar-wrapper{position:fixed;left:0;top:0;height:100vh;width:320px;background:#fff;border-right:1px solid #E5E7EB;overflow-y:auto;z-index:50;transition:left 0.3s ease}
+  .sidebar-wrapper.collapsed{left:-320px}
+  .sidebar-toggle{position:fixed;left:320px;top:1rem;width:40px;height:40px;background:#111827;color:#F59E0B;border:none;border-radius:6px;cursor:pointer;font-size:1.3rem;display:flex;align-items:center;justify-content:center;z-index:49;transition:left 0.3s ease;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,0.15)}
+  .sidebar-wrapper.collapsed ~ .sidebar-toggle{left:0}
+  .sidebar{padding:1.5rem 1rem}
+  .sidebar-title{font-size:0.8rem;font-family:'Space Mono',monospace;color:#374151;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:1.5rem;border-bottom:1px solid #E5E7EB;padding-bottom:0.75rem}
+  .progress-section{background:#F9FAFB;border-radius:8px;padding:1rem;margin-bottom:1rem}
+  .progress-label-side{font-size:0.7rem;color:#6B7280;text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:0.5rem}
+  .progress-wrap-side{background:#E5E7EB;border-radius:100px;height:6px;overflow:hidden;margin-bottom:0.5rem}
+  .progress-bar-side{background:linear-gradient(90deg,#F59E0B,#EF4444);height:100%;border-radius:100px;transition:width 0.4s ease}
+  .progress-text-side{font-size:0.75rem;color:#374151;font-family:'Space Mono',monospace;font-weight:600}
+  .stats-section{display:grid;grid-template-columns:1fr;gap:0.75rem;margin-bottom:1.5rem}
+  .stat-side{background:#111827;border-radius:8px;padding:0.75rem;color:#fff}
+  .stat-label-side{font-size:0.65rem;text-transform:uppercase;letter-spacing:0.5px;color:#9CA3AF;margin-bottom:0.25rem}
+  .stat-value-side{font-size:1rem;font-weight:700;color:#F59E0B;font-family:'Space Mono',monospace}
+  .stat-wasted{color:#EF4444}
+  .calendar-section{margin-bottom:1rem}
+  .calendar-title{font-size:0.7rem;font-family:'Space Mono',monospace;text-transform:uppercase;letter-spacing:1px;color:#374151;font-weight:700;margin-bottom:0.75rem}
+  .calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+  .calendar-day{width:100%;aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:700;cursor:pointer;border:1px solid #E5E7EB;transition:all 0.2s}
+  .calendar-day.complete{background:#059669;color:#fff;border-color:#059669}
+  .calendar-day.partial{background:#FCD34D;color:#111827;border-color:#FCD34D}
+  .calendar-day.wasted{background:#FEE2E2;color:#991B1B;border-color:#FCA5A5}
+  .calendar-day:hover{transform:scale(1.1);box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+  .legend-section{border-top:1px solid #E5E7EB;padding-top:0.75rem}
+  .legend-item{display:flex;align-items:center;gap:0.5rem;font-size:0.75rem;color:#374151;margin-bottom:0.5rem}
+  .legend-dot{width:10px;height:10px;border-radius:3px}
+  .sidebar-wrapper.collapsed ~ .main{margin-left:0}
+  .sidebar-wrapper.collapsed ~ .sidebar-toggle{left:0}
+  .header.sidebar-collapsed{margin-left:0}
+  .main{max-width:900px;margin:0 auto;padding:1.5rem 1rem;margin-left:340px;transition:margin-left 0.3s ease}
   .phase{margin-bottom:2rem}
   .phase-header{display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:2px solid #111827}
   .phase-num{background:#111827;color:#F59E0B;font-family:'Space Mono',monospace;font-size:0.65rem;padding:4px 8px;border-radius:4px;font-weight:700;white-space:nowrap}
@@ -87,10 +117,21 @@
   .apply-url a{color:#2563EB;text-decoration:none}
   .apply-url a:hover{text-decoration:underline}
   .apply-note{font-size:0.65rem;color:#6B7280;margin-top:2px}
-  @media(max-width:600px){
+  @media(max-width:1200px){
+    .sidebar-wrapper{width:280px}
+    .sidebar-toggle{left:280px}
+    .main{margin-left:300px}
+    .header{margin-left:300px}
+    .sidebar-wrapper.collapsed ~ .main{margin-left:0}
+    .sidebar-wrapper.collapsed ~ .header{margin-left:0}
+  }
+  @media(max-width:900px){
+    .sidebar-wrapper{position:relative;width:100%;height:auto;border-right:none;border-top:1px solid #E5E7EB;margin-top:2rem}
+    .sidebar-toggle{display:none}
+    .main{margin-left:0;max-width:100%}
+    .header{margin-left:0}
     .stats-row{grid-template-columns:repeat(2,1fr)}
     .header-top{flex-direction:column;gap:0.5rem}
-    .phase-meta{display:none}
   }
 </style>
 </head>
@@ -100,7 +141,7 @@
   <div class="header-top">
     <div>
       <div class="header-title">30-DAY APPLIED AI GRIND</div>
-      <div class="header-sub">Apr 25 → May 24, 2026 &nbsp;|&nbsp; Internship or bust</div>
+      <div class="header-sub">May 2 → May 31, 2026 &nbsp;|&nbsp; Internship or bust</div>
     </div>
     <div style="font-family:'Space Mono',monospace;font-size:0.65rem;color:#F59E0B;text-align:right">
       <div id="done-count" style="font-size:1rem;font-weight:700">0</div>
@@ -121,6 +162,57 @@
     <span class="progress-text" id="p-phase">Phase 1: Foundation</span>
   </div>
 </div>
+
+<div class="sidebar-wrapper">
+  <div class="sidebar">
+    <div class="sidebar-title">Progress Tracker</div>
+    
+    <div class="progress-section">
+      <div class="progress-label-side">Overall</div>
+      <div class="progress-wrap-side">
+        <div class="progress-bar-side" id="progress-bar-side" style="width:0%"></div>
+      </div>
+      <div class="progress-text-side" id="p-text-side">0 / 0</div>
+    </div>
+
+    <div class="stats-section">
+      <div class="stat-side">
+        <div class="stat-label-side">Days Completed</div>
+        <div class="stat-value-side" id="stat-days-side">0/30</div>
+      </div>
+      <div class="stat-side">
+        <div class="stat-label-side">Consecutive Days</div>
+        <div class="stat-value-side" id="stat-streak">0</div>
+      </div>
+      <div class="stat-side">
+        <div class="stat-label-side">Days Wasted</div>
+        <div class="stat-value-side stat-wasted" id="stat-wasted">0</div>
+      </div>
+    </div>
+
+    <div class="calendar-section">
+      <div class="calendar-title">30-Day Calendar</div>
+      <div class="calendar-grid" id="calendar-grid"></div>
+    </div>
+
+    <div class="legend-section">
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#059669"></div>
+        <span>Day Complete</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#FCD34D"></div>
+        <span>In Progress</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#EF4444"></div>
+        <span>No Progress</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()" title="Toggle sidebar">◀</button>
 
 <div class="main">
 
@@ -160,14 +252,14 @@
     <div class="phase-header">
       <div class="phase-num">PHASE 01</div>
       <div class="phase-title">Foundation Sprint</div>
-      <div class="phase-meta">Apr 25 — May 1 &nbsp;|&nbsp; Python · ML · LangChain setup</div>
+      <div class="phase-meta">May 2 — May 8 &nbsp;|&nbsp; Python · ML · LangChain setup</div>
     </div>
 
     <!-- Day 1 -->
     <div class="day-card" id="card-d1">
       <div class="day-header" onclick="toggleDay('d1')">
         <div class="day-num">DAY 01</div>
-        <div class="day-date">Apr 25, Sat</div>
+        <div class="day-date">May 18, Sun</div>
         <div class="day-badge badge-free">FREE</div>
         <div class="day-hours">~12 hrs</div>
         <div class="day-toggle" id="tog-d1">▶</div>
@@ -188,9 +280,9 @@
     <div class="day-card" id="card-d2">
       <div class="day-header" onclick="toggleDay('d2')">
         <div class="day-num">DAY 02</div>
-        <div class="day-date">Apr 26, Sun</div>
-        <div class="day-badge badge-free">FREE</div>
-        <div class="day-hours">~12 hrs</div>
+        <div class="day-date">May 27, Tue</div>
+        <div class="day-badge badge-college">COLLEGE</div>
+        <div class="day-hours">~6 hrs</div>
         <div class="day-toggle" id="tog-d2">▶</div>
       </div>
       <div class="day-body" id="body-d2">
@@ -209,9 +301,9 @@
     <div class="day-card" id="card-d3">
       <div class="day-header" onclick="toggleDay('d3')">
         <div class="day-num">DAY 03</div>
-        <div class="day-date">Apr 27, Mon</div>
-        <div class="day-badge badge-college">COLLEGE</div>
-        <div class="day-hours">~6 hrs</div>
+        <div class="day-date">May 18, Sun</div>
+        <div class="day-badge badge-free">FREE</div>
+        <div class="day-hours">~12 hrs</div>
         <div class="day-toggle" id="tog-d3">▶</div>
       </div>
       <div class="day-body" id="body-d3">
@@ -232,7 +324,7 @@
     <div class="day-card" id="card-d4">
       <div class="day-header" onclick="toggleDay('d4')">
         <div class="day-num">DAY 04</div>
-        <div class="day-date">Apr 28, Tue</div>
+        <div class="day-date">May 27, Tue</div>
         <div class="day-badge badge-college">COLLEGE</div>
         <div class="day-hours">~6 hrs</div>
         <div class="day-toggle" id="tog-d4">▶</div>
@@ -254,9 +346,9 @@
     <div class="day-card" id="card-d5">
       <div class="day-header" onclick="toggleDay('d5')">
         <div class="day-num">DAY 05</div>
-        <div class="day-date">Apr 29, Wed</div>
-        <div class="day-badge badge-college">COLLEGE</div>
-        <div class="day-hours">~6 hrs</div>
+        <div class="day-date">May 18, Sun</div>
+        <div class="day-badge badge-free">FREE</div>
+        <div class="day-hours">~12 hrs</div>
         <div class="day-toggle" id="tog-d5">▶</div>
       </div>
       <div class="day-body" id="body-d5">
@@ -277,7 +369,7 @@
     <div class="day-card" id="card-d6">
       <div class="day-header" onclick="toggleDay('d6')">
         <div class="day-num">DAY 06</div>
-        <div class="day-date">Apr 30, Thu</div>
+        <div class="day-date">May 27, Tue</div>
         <div class="day-badge badge-college">COLLEGE</div>
         <div class="day-hours">~6 hrs</div>
         <div class="day-toggle" id="tog-d6">▶</div>
@@ -300,7 +392,7 @@
     <div class="day-card" id="card-d7">
       <div class="day-header" onclick="toggleDay('d7')">
         <div class="day-num">DAY 07</div>
-        <div class="day-date">May 1, Fri — Labour Day</div>
+        <div class="day-date">May 18, Sun</div>
         <div class="day-badge badge-free">FREE</div>
         <div class="day-hours">~12 hrs</div>
         <div class="day-toggle" id="tog-d7">▶</div>
@@ -324,16 +416,16 @@
     <div class="phase-header">
       <div class="phase-num">PHASE 02</div>
       <div class="phase-title">Core AI Stack + RAG Mastery</div>
-      <div class="phase-meta">May 2 — May 10 &nbsp;|&nbsp; Agents · RAG · Deployment</div>
+      <div class="phase-meta">May 9 — May 17 &nbsp;|&nbsp; Agents · RAG · Deployment</div>
     </div>
 
     <!-- Day 8 -->
     <div class="day-card" id="card-d8">
       <div class="day-header" onclick="toggleDay('d8')">
         <div class="day-num">DAY 08</div>
-        <div class="day-date">May 2, Sat</div>
-        <div class="day-badge badge-free">FREE</div>
-        <div class="day-hours">~12 hrs</div>
+        <div class="day-date">May 27, Tue</div>
+        <div class="day-badge badge-college">COLLEGE</div>
+        <div class="day-hours">~6 hrs</div>
         <div class="day-toggle" id="tog-d8">▶</div>
       </div>
       <div class="day-body" id="body-d8">
@@ -352,7 +444,7 @@
     <div class="day-card" id="card-d9">
       <div class="day-header" onclick="toggleDay('d9')">
         <div class="day-num">DAY 09</div>
-        <div class="day-date">May 3, Sun</div>
+        <div class="day-date">May 18, Sun</div>
         <div class="day-badge badge-free">FREE</div>
         <div class="day-hours">~12 hrs</div>
         <div class="day-toggle" id="tog-d9">▶</div>
@@ -374,7 +466,7 @@
     <div class="day-card" id="card-d10">
       <div class="day-header" onclick="toggleDay('d10')">
         <div class="day-num">DAY 10</div>
-        <div class="day-date">May 4, Mon</div>
+        <div class="day-date">May 27, Tue</div>
         <div class="day-badge badge-college">COLLEGE</div>
         <div class="day-hours">~6 hrs</div>
         <div class="day-toggle" id="tog-d10">▶</div>
@@ -396,9 +488,9 @@
     <div class="day-card" id="card-d11">
       <div class="day-header" onclick="toggleDay('d11')">
         <div class="day-num">DAY 11</div>
-        <div class="day-date">May 5, Tue</div>
-        <div class="day-badge badge-college">COLLEGE</div>
-        <div class="day-hours">~6 hrs</div>
+        <div class="day-date">May 18, Sun</div>
+        <div class="day-badge badge-free">FREE</div>
+        <div class="day-hours">~12 hrs</div>
         <div class="day-toggle" id="tog-d11">▶</div>
       </div>
       <div class="day-body" id="body-d11">
@@ -418,7 +510,7 @@
     <div class="day-card" id="card-d12">
       <div class="day-header" onclick="toggleDay('d12')">
         <div class="day-num">DAY 12</div>
-        <div class="day-date">May 6, Wed</div>
+        <div class="day-date">May 27, Tue</div>
         <div class="day-badge badge-college">COLLEGE</div>
         <div class="day-hours">~6 hrs</div>
         <div class="day-toggle" id="tog-d12">▶</div>
@@ -440,9 +532,9 @@
     <div class="day-card" id="card-d13">
       <div class="day-header" onclick="toggleDay('d13')">
         <div class="day-num">DAY 13</div>
-        <div class="day-date">May 7, Thu</div>
-        <div class="day-badge badge-college">COLLEGE</div>
-        <div class="day-hours">~6 hrs</div>
+        <div class="day-date">May 18, Sun</div>
+        <div class="day-badge badge-free">FREE</div>
+        <div class="day-hours">~12 hrs</div>
         <div class="day-toggle" id="tog-d13">▶</div>
       </div>
       <div class="day-body" id="body-d13">
@@ -462,7 +554,7 @@
     <div class="day-card" id="card-d14">
       <div class="day-header" onclick="toggleDay('d14')">
         <div class="day-num">DAY 14</div>
-        <div class="day-date">May 8, Fri</div>
+        <div class="day-date">May 27, Tue</div>
         <div class="day-badge badge-college">COLLEGE</div>
         <div class="day-hours">~6 hrs</div>
         <div class="day-toggle" id="tog-d14">▶</div>
@@ -484,7 +576,7 @@
     <div class="day-card" id="card-d15">
       <div class="day-header" onclick="toggleDay('d15')">
         <div class="day-num">DAY 15</div>
-        <div class="day-date">May 9, Sat</div>
+        <div class="day-date">May 18, Sun</div>
         <div class="day-badge badge-free">FREE</div>
         <div class="day-hours">~12 hrs</div>
         <div class="day-toggle" id="tog-d15">▶</div>
@@ -505,9 +597,9 @@
     <div class="day-card" id="card-d16">
       <div class="day-header" onclick="toggleDay('d16')">
         <div class="day-num">DAY 16</div>
-        <div class="day-date">May 10, Sun</div>
-        <div class="day-badge badge-free">FREE</div>
-        <div class="day-hours">~12 hrs</div>
+        <div class="day-date">May 27, Tue</div>
+        <div class="day-badge badge-college">COLLEGE</div>
+        <div class="day-hours">~6 hrs</div>
         <div class="day-toggle" id="tog-d16">▶</div>
       </div>
       <div class="day-body" id="body-d16">
@@ -528,16 +620,16 @@
     <div class="phase-header">
       <div class="phase-num">PHASE 03</div>
       <div class="phase-title">Advanced AI + Project 3</div>
-      <div class="phase-meta">May 11 — May 19 &nbsp;|&nbsp; Fine-tuning · Deployment · Polish</div>
+      <div class="phase-meta">May 18 — May 26 &nbsp;|&nbsp; Fine-tuning · Deployment · Polish</div>
     </div>
 
     <!-- Day 17 -->
     <div class="day-card" id="card-d17">
       <div class="day-header" onclick="toggleDay('d17')">
         <div class="day-num">DAY 17</div>
-        <div class="day-date">May 11, Mon</div>
-        <div class="day-badge badge-college">COLLEGE</div>
-        <div class="day-hours">~6 hrs</div>
+        <div class="day-date">May 18, Sun</div>
+        <div class="day-badge badge-free">FREE</div>
+        <div class="day-hours">~12 hrs</div>
         <div class="day-toggle" id="tog-d17">▶</div>
       </div>
       <div class="day-body" id="body-d17">
@@ -557,7 +649,7 @@
     <div class="day-card" id="card-d18">
       <div class="day-header" onclick="toggleDay('d18')">
         <div class="day-num">DAY 18</div>
-        <div class="day-date">May 12, Tue</div>
+        <div class="day-date">May 27, Tue</div>
         <div class="day-badge badge-college">COLLEGE</div>
         <div class="day-hours">~6 hrs</div>
         <div class="day-toggle" id="tog-d18">▶</div>
@@ -579,9 +671,9 @@
     <div class="day-card" id="card-d19">
       <div class="day-header" onclick="toggleDay('d19')">
         <div class="day-num">DAY 19</div>
-        <div class="day-date">May 13, Tue — Holiday</div>
-        <div class="day-badge badge-free">FREE</div>
-        <div class="day-hours">~12 hrs</div>
+        <div class="day-date">May 26, Mon</div>
+        <div class="day-badge badge-college">COLLEGE</div>
+        <div class="day-hours">~6 hrs</div>
         <div class="day-toggle" id="tog-d19">▶</div>
       </div>
       <div class="day-body" id="body-d19">
@@ -600,7 +692,7 @@
     <div class="day-card" id="card-d20">
       <div class="day-header" onclick="toggleDay('d20')">
         <div class="day-num">DAY 20</div>
-        <div class="day-date">May 14, Thu</div>
+        <div class="day-date">May 27, Tue</div>
         <div class="day-badge badge-college">COLLEGE</div>
         <div class="day-hours">~6 hrs</div>
         <div class="day-toggle" id="tog-d20">▶</div>
@@ -622,7 +714,7 @@
     <div class="day-card" id="card-d21">
       <div class="day-header" onclick="toggleDay('d21')">
         <div class="day-num">DAY 21</div>
-        <div class="day-date">May 15, Fri</div>
+        <div class="day-date">May 26, Mon</div>
         <div class="day-badge badge-college">COLLEGE</div>
         <div class="day-hours">~6 hrs</div>
         <div class="day-toggle" id="tog-d21">▶</div>
@@ -644,9 +736,9 @@
     <div class="day-card" id="card-d22">
       <div class="day-header" onclick="toggleDay('d22')">
         <div class="day-num">DAY 22</div>
-        <div class="day-date">May 16, Sat</div>
-        <div class="day-badge badge-free">FREE</div>
-        <div class="day-hours">~12 hrs</div>
+        <div class="day-date">May 27, Tue</div>
+        <div class="day-badge badge-college">COLLEGE</div>
+        <div class="day-hours">~6 hrs</div>
         <div class="day-toggle" id="tog-d22">▶</div>
       </div>
       <div class="day-body" id="body-d22">
@@ -665,9 +757,9 @@
     <div class="day-card" id="card-d23">
       <div class="day-header" onclick="toggleDay('d23')">
         <div class="day-num">DAY 23</div>
-        <div class="day-date">May 17, Sun</div>
-        <div class="day-badge badge-free">FREE</div>
-        <div class="day-hours">~12 hrs</div>
+        <div class="day-date">May 26, Mon</div>
+        <div class="day-badge badge-college">COLLEGE</div>
+        <div class="day-hours">~6 hrs</div>
         <div class="day-toggle" id="tog-d23">▶</div>
       </div>
       <div class="day-body" id="body-d23">
@@ -686,7 +778,7 @@
     <div class="day-card" id="card-d24">
       <div class="day-header" onclick="toggleDay('d24')">
         <div class="day-num">DAY 24</div>
-        <div class="day-date">May 18, Mon</div>
+        <div class="day-date">May 27, Tue</div>
         <div class="day-badge badge-college">COLLEGE</div>
         <div class="day-hours">~6 hrs</div>
         <div class="day-toggle" id="tog-d24">▶</div>
@@ -708,7 +800,7 @@
     <div class="day-card" id="card-d25">
       <div class="day-header" onclick="toggleDay('d25')">
         <div class="day-num">DAY 25</div>
-        <div class="day-date">May 19, Tue</div>
+        <div class="day-date">May 26, Mon</div>
         <div class="day-badge badge-college">COLLEGE</div>
         <div class="day-hours">~6 hrs</div>
         <div class="day-toggle" id="tog-d25">▶</div>
@@ -732,16 +824,16 @@
     <div class="phase-header">
       <div class="phase-num">PHASE 04</div>
       <div class="phase-title">Full Send — Applications + Interview Prep</div>
-      <div class="phase-meta">May 20 — May 24 &nbsp;|&nbsp; Apply hard. Prep harder.</div>
+      <div class="phase-meta">May 27 — May 31 &nbsp;|&nbsp; Apply hard. Prep harder.</div>
     </div>
 
     <!-- Day 26 -->
     <div class="day-card" id="card-d26">
       <div class="day-header" onclick="toggleDay('d26')">
         <div class="day-num">DAY 26</div>
-        <div class="day-date">May 20, Wed</div>
-        <div class="day-badge badge-free">FREE</div>
-        <div class="day-hours">~12 hrs</div>
+        <div class="day-date">May 27, Tue</div>
+        <div class="day-badge badge-college">COLLEGE</div>
+        <div class="day-hours">~6 hrs</div>
         <div class="day-toggle" id="tog-d26">▶</div>
       </div>
       <div class="day-body" id="body-d26">
@@ -758,9 +850,9 @@
     <div class="day-card" id="card-d27">
       <div class="day-header" onclick="toggleDay('d27')">
         <div class="day-num">DAY 27</div>
-        <div class="day-date">May 21, Thu</div>
-        <div class="day-badge badge-free">FREE</div>
-        <div class="day-hours">~12 hrs</div>
+        <div class="day-date">May 30, Fri</div>
+        <div class="day-badge badge-college">COLLEGE</div>
+        <div class="day-hours">~6 hrs</div>
         <div class="day-toggle" id="tog-d27">▶</div>
       </div>
       <div class="day-body" id="body-d27">
@@ -777,9 +869,9 @@
     <div class="day-card" id="card-d28">
       <div class="day-header" onclick="toggleDay('d28')">
         <div class="day-num">DAY 28</div>
-        <div class="day-date">May 22, Fri</div>
-        <div class="day-badge badge-free">FREE</div>
-        <div class="day-hours">~12 hrs</div>
+        <div class="day-date">May 29, Thu</div>
+        <div class="day-badge badge-college">COLLEGE</div>
+        <div class="day-hours">~6 hrs</div>
         <div class="day-toggle" id="tog-d28">▶</div>
       </div>
       <div class="day-body" id="body-d28">
@@ -796,9 +888,9 @@
     <div class="day-card" id="card-d29">
       <div class="day-header" onclick="toggleDay('d29')">
         <div class="day-num">DAY 29</div>
-        <div class="day-date">May 23, Sat</div>
-        <div class="day-badge badge-free">FREE</div>
-        <div class="day-hours">~12 hrs</div>
+        <div class="day-date">May 30, Fri</div>
+        <div class="day-badge badge-college">COLLEGE</div>
+        <div class="day-hours">~6 hrs</div>
         <div class="day-toggle" id="tog-d29">▶</div>
       </div>
       <div class="day-body" id="body-d29">
@@ -815,7 +907,7 @@
     <div class="day-card" id="card-d30">
       <div class="day-header" onclick="toggleDay('d30')">
         <div class="day-num">DAY 30</div>
-        <div class="day-date">May 24, Sun — D-Day</div>
+        <div class="day-date">May 31, Sat — D-Day</div>
         <div class="day-badge badge-free">FREE</div>
         <div class="day-hours">~12 hrs</div>
         <div class="day-toggle" id="tog-d30">▶</div>
@@ -1007,20 +1099,50 @@ function updateStats() {
   const pct = total ? Math.round((count / total) * 100) : 0;
 
   document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-bar-side').style.width = pct + '%';
   document.getElementById('p-done').textContent = count + ' / ' + total + ' tasks';
+  document.getElementById('p-text-side').textContent = count + ' / ' + total;
   document.getElementById('s-tasks').textContent = pct + '%';
   document.getElementById('done-count').textContent = count;
 
-  // Count completed days
+  // Count completed days and wasted days
   let completedDays = 0;
+  let wastedDays = 0;
+  const dayStats = [];
+  
   for (let d = 1; d <= 30; d++) {
     const dayTasks = document.querySelectorAll('[data-day="d' + d + '"]');
     const dayDone = document.querySelectorAll('[data-day="d' + d + '"]:checked');
-    if (dayTasks.length > 0 && dayTasks.length === dayDone.length) completedDays++;
+    
+    if (dayTasks.length > 0) {
+      const progress = dayDone.length / dayTasks.length;
+      dayStats.push({ day: d, total: dayTasks.length, done: dayDone.length, progress });
+      
+      if (progress === 1) {
+        completedDays++;
+      } else if (progress === 0) {
+        wastedDays++;
+      }
+    }
   }
-  document.getElementById('s-days').textContent = completedDays;
 
-  // Count projects (rough: check if day 9 complete + day 16 + day 22)
+  document.getElementById('s-days').textContent = completedDays;
+  document.getElementById('stat-days-side').textContent = completedDays + '/30';
+  document.getElementById('stat-wasted').textContent = wastedDays;
+
+  // Calculate consecutive streak
+  let streak = 0;
+  for (let d = 1; d <= 30; d++) {
+    const stat = dayStats.find(s => s.day === d);
+    if (stat && stat.progress === 1) {
+      streak++;
+    } else {
+      break;
+    }
+  }
+  document.getElementById('stat-streak').textContent = streak;
+
+  // Count projects
   let proj = 0;
   const p1 = document.querySelectorAll('[data-day="d9"]:checked').length === document.querySelectorAll('[data-day="d9"]').length && document.querySelectorAll('[data-day="d9"]').length > 0;
   const p2 = document.querySelectorAll('[data-day="d16"]:checked').length === document.querySelectorAll('[data-day="d16"]').length && document.querySelectorAll('[data-day="d16"]').length > 0;
@@ -1030,7 +1152,7 @@ function updateStats() {
   if (p3) proj++;
   document.getElementById('s-proj').textContent = proj + '/3';
 
-  // Estimate apps based on application task completions
+  // Estimate apps
   let appCount = 0;
   const appDays = ['d23','d24','d25','d26','d27','d28','d29','d30'];
   appDays.forEach(day => {
@@ -1039,6 +1161,9 @@ function updateStats() {
   });
   document.getElementById('s-apps').textContent = Math.min(appCount, 99) + (appCount >= 65 ? '+ ✓' : '+');
 
+  // Update calendar
+  buildCalendar(dayStats);
+
   // Phase label
   const phases = [[1,7,'Phase 1: Foundation'],[8,16,'Phase 2: Core Stack'],[17,25,'Phase 3: Advanced + Build'],[26,30,'Phase 4: Full Send']];
   let label = 'Phase 1: Foundation';
@@ -1046,6 +1171,47 @@ function updateStats() {
     if (completedDays >= start - 1) label = name;
   });
   document.getElementById('p-phase').textContent = label;
+}
+
+function buildCalendar(dayStats) {
+  const grid = document.getElementById('calendar-grid');
+  grid.innerHTML = '';
+
+  for (let d = 1; d <= 30; d++) {
+    const stat = dayStats.find(s => s.day === d);
+    const cell = document.createElement('div');
+    cell.className = 'calendar-day';
+    cell.textContent = d;
+    cell.title = `Day ${d}`;
+
+    if (stat) {
+      if (stat.progress === 1) {
+        cell.classList.add('complete');
+        cell.title = `Day ${d} - Complete`;
+      } else if (stat.progress > 0) {
+        cell.classList.add('partial');
+        cell.title = `Day ${d} - ${Math.round(stat.progress * 100)}% done`;
+      } else {
+        cell.classList.add('wasted');
+        cell.title = `Day ${d} - No progress`;
+      }
+    }
+
+    cell.addEventListener('click', () => {
+      const card = document.getElementById('card-d' + d);
+      if (card) {
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const body = document.getElementById('body-d' + d);
+        const tog = document.getElementById('tog-d' + d);
+        if (!body.classList.contains('open')) {
+          body.classList.add('open');
+          tog.classList.add('open');
+        }
+      }
+    });
+
+    grid.appendChild(cell);
+  }
 }
 
 function checkDayCompletion() {
@@ -1071,9 +1237,31 @@ function toggleDay(id) {
   saveState();
 }
 
+function toggleSidebar() {
+  const sidebar = document.querySelector('.sidebar-wrapper');
+  const header = document.querySelector('.header');
+  const toggle = document.getElementById('sidebar-toggle');
+  sidebar.classList.toggle('collapsed');
+  header.classList.toggle('sidebar-collapsed');
+  toggle.textContent = sidebar.classList.contains('collapsed') ? '▶' : '◀';
+  localStorage.setItem('sidebar_collapsed', sidebar.classList.contains('collapsed'));
+}
+
 // Auto-open first day on load
 window.addEventListener('load', () => {
   loadState();
+  
+  // Restore sidebar state
+  const sidebarCollapsed = localStorage.getItem('sidebar_collapsed') === 'true';
+  const sidebar = document.querySelector('.sidebar-wrapper');
+  const header = document.querySelector('.header');
+  const toggle = document.getElementById('sidebar-toggle');
+  if (sidebarCollapsed) {
+    sidebar.classList.add('collapsed');
+    header.classList.add('sidebar-collapsed');
+    toggle.textContent = '▶';
+  }
+  
   if (!Object.keys(state.expanded).length) {
     toggleDay('d1');
   } else {
@@ -1086,6 +1274,8 @@ window.addEventListener('load', () => {
       }
     });
   }
+  // Build calendar on load
+  updateStats();
 });
 </script>
 </body>
